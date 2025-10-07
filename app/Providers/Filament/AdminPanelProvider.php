@@ -22,13 +22,14 @@ use Filament\Navigation\NavigationGroup;
 
 class AdminPanelProvider extends PanelProvider
 {
-    protected static ?string $navigationGroup = 'Administrasi User';
+    // protected static ?string $navigationGroup = 'Administrasi User';
     public function panel(Panel $panel): Panel
     {
         return $panel
             ->default()
             ->id('admin')
             ->path('admin')
+             ->authGuard('petugas')
             ->login()
             ->colors([
                 'primary' => Color::Amber,

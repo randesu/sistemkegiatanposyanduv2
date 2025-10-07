@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable; // untuk login Laravel/Filament
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -14,9 +14,9 @@ class PetugasPosyandu extends Authenticatable
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'username',
+        'email',
         'password',
-        'nama',
+        'name',
     ];
 
     protected $hidden = [
@@ -25,18 +25,20 @@ class PetugasPosyandu extends Authenticatable
     ];
 
     /**
-     * Kolom yang digunakan untuk autentikasi (username, bukan email)
+     * Menentukan kolom yang digunakan untuk autentikasi (id).
      */
-    public function username()
+    public function getAuthIdentifierName()
     {
-        return 'username';
+        return 'id';
     }
 
-    /**
-     * Relasi ke hasil pemeriksaan
-     */
     public function hasilPemeriksaans()
     {
         return $this->hasMany(HasilPemeriksaan::class, 'petugas_id', 'id');
+    }
+
+    public function getFilamentName(): string
+    {
+        return $this->nama ?? $this->email ?? 'Petugas';
     }
 }

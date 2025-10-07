@@ -19,7 +19,7 @@ class UserResource extends Resource
     protected static \UnitEnum|string|null $navigationGroup = 'Manajemen Posyandu';
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-user-circle';
     protected static ?string $navigationLabel = 'User (Admin)';
-    protected static ?int $navigationSort = 1;
+    // protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {

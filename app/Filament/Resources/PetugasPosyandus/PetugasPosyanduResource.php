@@ -23,12 +23,12 @@ class PetugasPosyanduResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('username')
-                ->label('Username')
+            TextInput::make('email')
+                ->label('email')
                 ->required()
                 ->unique(ignoreRecord: true),
 
-            TextInput::make('nama')
+            TextInput::make('name')
                 ->label('Nama Lengkap')
                 ->required(),
 
@@ -43,8 +43,8 @@ class PetugasPosyanduResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            TextColumn::make('username')->label('Username')->searchable(),
-            TextColumn::make('nama')->label('Nama')->searchable(),
+            TextColumn::make('email')->label('Email')->searchable(),
+            TextColumn::make('name')->label('Nama')->searchable(),
             TextColumn::make('created_at')->label('Dibuat')->dateTime(),
         ]);
     }
