@@ -16,7 +16,7 @@ class PetugasPosyanduResource extends Resource
 {
     protected static ?string $model = PetugasPosyandu::class;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'Manajemen Posyandu';
+    protected static \UnitEnum|string|null $navigationGroup = 'Master Posyandu';
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-user-group';
     protected static ?string $navigationLabel = 'Petugas Posyandu';
 

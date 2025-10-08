@@ -17,7 +17,7 @@ class BalitaResource extends Resource
 {
     protected static ?string $model = Balita::class;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'Manajemen Posyandu';
+    protected static \UnitEnum|string|null $navigationGroup = 'Master Posyandu';
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-user';
     protected static ?string $navigationLabel = 'Data Balita';
 

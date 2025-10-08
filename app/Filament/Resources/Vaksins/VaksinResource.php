@@ -14,7 +14,7 @@ class VaksinResource extends Resource
 {
     protected static ?string $model = Vaksin::class;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'Manajemen Posyandu';
+    protected static \UnitEnum|string|null $navigationGroup = 'Master Posyandu';
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-beaker';
     protected static ?string $navigationLabel = 'Data Vaksin';
 

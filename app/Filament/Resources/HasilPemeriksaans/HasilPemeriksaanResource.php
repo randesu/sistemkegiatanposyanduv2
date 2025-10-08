@@ -31,7 +31,7 @@ class HasilPemeriksaanResource extends Resource
 
             Select::make('petugas_id')
                 ->label('Petugas Posyandu')
-                ->relationship('petugas', 'nama')
+                ->relationship('petugas', 'name')
                 ->required(),
 
             TextInput::make('tinggi')->label('Tinggi (cm)')->numeric()->required(),
@@ -49,7 +49,7 @@ class HasilPemeriksaanResource extends Resource
     {
         return $table->columns([
             TextColumn::make('balita.nama')->label('Balita'),
-            TextColumn::make('petugas.nama')->label('Petugas'),
+            TextColumn::make('petugas.name')->label('Petugas'),
             TextColumn::make('tinggi')->label('Tinggi (cm)'),
             TextColumn::make('berat_badan')->label('Berat (kg)'),
             // TextColumn::make('created_at')->label('Tanggal Pemeriksaan')->dateTime(),
