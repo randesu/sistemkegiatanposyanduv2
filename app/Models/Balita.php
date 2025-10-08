@@ -1,20 +1,53 @@
 <?php
 
-// app/Models/Balita.php
 namespace App\Models;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User as Authenticatable; // bila balita/ortu login (opsional)
 
-class Balita extends Model
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+
+class Balita extends Authenticatable
 {
+    use Notifiable;
+
     protected $table = 'balitas';
     protected $primaryKey = 'id';
-    protected $fillable = ['nik','nama','orang_tua','password'];
     public $timestamps = true;
 
+    protected $fillable = [
+        'nik',
+        'nama',
+        'orang_tua',
+        'password',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * Login akan menggunakan kolom ID sebagai identifier utama.
+     */
+    public function getAuthIdentifierName()
+    {
+        return 'id';
+    }
+
+    /**
+     * Relasi ke hasil pemeriksaan.
+     */
     public function hasilPemeriksaans()
     {
         return $this->hasMany(HasilPemeriksaan::class, 'balita_id', 'id');
     }
-}
 
+    /**
+     * Mutator (opsional) jika suatu saat ingin menyimpan password terenkripsi.
+     */
+    public function setPasswordAttribute($value)
+    {
+        if (!empty($value)) {
+            $this->attributes['password'] = bcrypt($value);
+        }
+    }
+}
