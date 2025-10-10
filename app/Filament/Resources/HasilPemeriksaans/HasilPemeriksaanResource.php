@@ -19,7 +19,7 @@ class HasilPemeriksaanResource extends Resource
 
     protected static \UnitEnum|string|null $navigationGroup = 'Manajemen Posyandu';
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-clipboard-document';
-    protected static ?string $navigationLabel = 'Hasil Pemeriksaan';
+    protected static ?string $navigationLabel = 'Check-Up';
 
     public static function form(Schema $schema): Schema
     {
