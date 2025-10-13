@@ -4,14 +4,14 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+// Route::get('/', function () {
+//     return view('welcome');
+// })->name('home');
+// Route::get('/')
 
 
-
-Route::get('/cek-balita', [BalitaDataController::class, 'showForm'])->name('balita.form');
-Route::post('/cek-balita', [BalitaDataController::class, 'showData'])->name('balita.data');
+Route::get('/', [BalitaDataController::class, 'showForm'])->name('balita.form');
+Route::post('/data-balita', [BalitaDataController::class, 'showData'])->name('balita.data');
 
 
 
