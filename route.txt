@@ -1,0 +1,3 @@
+{{ route('balita.hasil-pemeriksaan', $balita->id) }}
+
+{{ route('dashboard.balita', $balita->id) }}

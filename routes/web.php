@@ -1,18 +1,31 @@
 <?php
+
 use App\Http\Controllers\BalitaDataController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// })->name('home');
-// Route::get('/')
-
-
+// 1. Rute untuk menampilkan form input ID Balita
+// URL: /
+// Nama Rute: balita.form
 Route::get('/', [BalitaDataController::class, 'showForm'])->name('balita.form');
-Route::post('/data-balita', [BalitaDataController::class, 'showData'])->name('balita.data');
 
+// 2. Rute untuk memproses ID dan menampilkan Dashboard Utama (Card Menu)
+// Dashboard Utama ini adalah tempat pengguna melihat Ringkasan data dan menekan "Riwayat Pemeriksaan"
+// URL: /dashboard-balita
+// Nama Rute: balita.dashboard
+Route::post('/dashboard-balita', [BalitaDataController::class, 'showData'])->name('balita.dashboard');
+
+
+// 3. Rute untuk menampilkan halaman Riwayat Pemeriksaan Detail (Tabel)
+// Halaman ini muncul setelah pengguna menekan kartu "Riwayat Pemeriksaan" di dashboard utama.
+// URL: /balita/{id}/pemeriksaan
+// Nama Rute: balita.hasil-pemeriksaan
+Route::get('/balita/{id}/pemeriksaan', [BalitaDataController::class, 'showPemeriksaan'])->name('balita.hasil-pemeriksaan');
+
+
+// Catatan: Jika ada rute Fortify/Livewire/Volt lainnya, mereka harus diletakkan di sini juga.
+//Route::post('/riwayat-balita', [BalitaDataController::class, ])->name('balita.data');
 
 
 

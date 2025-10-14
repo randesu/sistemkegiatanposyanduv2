@@ -181,7 +181,7 @@
     </style>
 </head>
 <body>
-    <form action="{{ route('balita.data') }}" method="POST">
+    <form action="{{ route('balita.dashboard') }}" method="POST">
         @csrf
         <h2>Cek Data Balita</h2>
         <input type="number" name="balita_id" placeholder="Masukkan ID Balita" required>
