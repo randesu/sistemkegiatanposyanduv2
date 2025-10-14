@@ -13,6 +13,12 @@ use Filament\Forms\Components\MultiSelect;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 
+// ✅ Tambahan
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\DatePicker as FilterDatePicker;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
+
 class HasilPemeriksaanResource extends Resource
 {
     protected static ?string $model = HasilPemeriksaan::class;
@@ -24,7 +30,6 @@ class HasilPemeriksaanResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            // Input Data Utama Pemeriksaan
             Select::make('balita_id')
                 ->label('Balita')
                 ->relationship('balita', 'nama')
@@ -38,46 +43,77 @@ class HasilPemeriksaanResource extends Resource
             TextInput::make('tinggi')->label('Tinggi (cm)')->numeric()->required(),
             TextInput::make('berat_badan')->label('Berat Badan (kg)')->numeric()->required(),
             Textarea::make('catatan')->label('Catatan'),
-            
-            // --- INPUT RELASI MANY-TO-MANY ---
-            
-            // Relasi Vaksin (sudah ada)
+
             MultiSelect::make('vaksins')
                 ->label('Vaksin Diberikan')
                 ->relationship('vaksins', 'nama_vaksin')
                 ->preload(),
-                
-            // Relasi Vitamin (BARU)
-            MultiSelect::make('vitamins') // Nama relasi harus sama dengan fungsi di model (vitamins())
+
+            MultiSelect::make('vitamins')
                 ->label('Vitamin Diberikan')
-                ->relationship('vitamins', 'nama_vitamin') // Gunakan model Vitamin dan kolom nama_vitamin
+                ->relationship('vitamins', 'nama_vitamin')
                 ->preload()
                 ->helperText('Pilih vitamin yang diberikan pada pemeriksaan ini.'),
-
-            // ---------------------------------
         ]);
     }
 
     public static function table(Table $table): Table
     {
-        return $table->columns([
-            TextColumn::make('balita.nama')->label('Balita'),
-            TextColumn::make('petugas.name')->label('Petugas'),
-            TextColumn::make('tinggi')->label('Tinggi (cm)'),
-            TextColumn::make('berat_badan')->label('Berat (kg)'),
-            
-            // Menampilkan daftar Vaksin yang diberikan (Opsional, tapi membantu)
-            TextColumn::make('vaksins.nama_vaksin')
-                ->label('Vaksin')
-                ->badge(), // Menampilkan daftar sebagai lencana
+        return $table
+            ->columns([
+                TextColumn::make('balita.nama')->label('Balita')->searchable(),
+                TextColumn::make('petugas.name')->label('Petugas')->searchable(),
+                TextColumn::make('tinggi')->label('Tinggi (cm)'),
+                TextColumn::make('berat_badan')->label('Berat (kg)'),
 
-            // Menampilkan daftar Vitamin yang diberikan (BARU)
-            TextColumn::make('vitamins.nama_vitamin')
-                ->label('Vitamin')
-                ->badge(), // Menampilkan daftar sebagai lencana
+                TextColumn::make('vaksins.nama_vaksin')
+                    ->label('Vaksin')
+                    ->formatStateUsing(fn($state) => is_array($state) ? implode(', ', $state) : $state)
+                    ->badge(),
 
-            TextColumn::make('created_at')->label('Tanggal Pemeriksaan')->dateTime(),
-        ]);
+                TextColumn::make('vitamins.nama_vitamin')
+                    ->label('Vitamin')
+                    ->formatStateUsing(fn($state) => is_array($state) ? implode(', ', $state) : $state)
+                    ->badge(),
+
+                TextColumn::make('created_at')->label('Tanggal Pemeriksaan')->dateTime(),
+            ])
+
+            // ✅ Filter berdasarkan tanggal pemeriksaan
+            ->filters([
+                Filter::make('created_at')
+                    ->label('Tanggal Pemeriksaan')
+                    ->form([
+                        FilterDatePicker::make('from')->label('Dari'),
+                        FilterDatePicker::make('until')->label('Sampai'),
+                    ])
+                    ->query(function ($query, array $data): void {
+                        $query
+                            ->when($data['from'], fn($q, $date) => $q->whereDate('created_at', '>=', $date))
+                            ->when($data['until'], fn($q, $date) => $q->whereDate('created_at', '<=', $date));
+                    }),
+            ])
+
+            // ✅ Tambahkan tombol Export di header dan bulk action
+            ->headerActions([
+                FilamentExportHeaderAction::make('export')
+                    ->label('Export Data Pemeriksaan')
+                    ->button()
+                    ->fileName('hasil_pemeriksaan')
+                    ->defaultFormat('pdf')
+                    ->disableXlsx()
+                    ->disableCsv()
+                    ->directDownload(),
+            ])
+            ->bulkActions([
+                FilamentExportBulkAction::make('export')
+                    ->label('Export yang Dipilih')
+                    ->button()
+                    ->fileName('hasil_pemeriksaan')
+                    ->defaultFormat('pdf')
+                    ->disableXlsx()
+                    ->disableCsv(),
+            ]);
     }
 
     public static function getPages(): array

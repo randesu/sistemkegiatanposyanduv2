@@ -9,6 +9,8 @@ use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
 
 class VaksinResource extends Resource
 {
@@ -33,11 +35,20 @@ class VaksinResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->columns([
-            TextColumn::make('nama_vaksin')->label('Nama Vaksin')->searchable(),
-            TextColumn::make('jenis_vaksin')->label('Jenis'),
-            TextColumn::make('created_at')->label('Dibuat')->dateTime(),
-        ]);
+        return $table
+            ->columns([
+                TextColumn::make('nama_vaksin')->label('Nama Vaksin')->searchable(),
+                TextColumn::make('jenis_vaksin')->label('Jenis')->searchable(),
+                TextColumn::make('created_at')->label('Dibuat')->dateTime(),
+            ])
+            ->headerActions([
+                // ✅ Tombol Export di Header Table
+                FilamentExportHeaderAction::make('export'),
+            ])
+            ->bulkActions([
+                // ✅ Export berdasarkan data yang dipilih
+                FilamentExportBulkAction::make('export'),
+            ]);
     }
 
     public static function getPages(): array

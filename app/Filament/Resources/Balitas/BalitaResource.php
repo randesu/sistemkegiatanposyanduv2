@@ -8,13 +8,20 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\DatePicker; // Import baru: DatePicker
-use Filament\Forms\Components\Select;     // Import baru: Select
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Support\Enums\Operation;
 use Illuminate\Support\Facades\Hash;
-use Filament\Tables\Filters\SelectFilter; // Import baru: SelectFilter
+
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\Filter;
+
+// ✅ Tambahan untuk export dan filter tanggal
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
+use Filament\Forms\Components\DatePicker as FilterDatePicker;
 
 class BalitaResource extends Resource
 {
@@ -27,7 +34,6 @@ class BalitaResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            // Kolom yang sudah ada
             TextInput::make('nik')
                 ->label('NIK')
                 ->required()
@@ -37,8 +43,6 @@ class BalitaResource extends Resource
                 ->label('Nama Balita')
                 ->required(),
 
-            // --- ATRIBUT BARU: DETAIL BALITA ---
-
             TextInput::make('tempat_lahir')
                 ->label('Tempat Lahir')
                 ->maxLength(100)
@@ -46,9 +50,8 @@ class BalitaResource extends Resource
 
             DatePicker::make('tanggal_lahir')
                 ->label('Tanggal Lahir')
-                ->maxDate(now()) // Batasi tanggal maksimum hingga hari ini
-                ->nullable()
-                ->required(), // Jika Anda ingin wajib diisi di form
+                ->maxDate(now())
+                ->required(),
 
             Select::make('jenis_kelamin')
                 ->label('Jenis Kelamin')
@@ -63,7 +66,6 @@ class BalitaResource extends Resource
                 ->rows(3)
                 ->nullable(),
 
-            // Kolom yang sudah ada
             TextInput::make('orang_tua')
                 ->label('Nama Orang Tua')
                 ->required(),
@@ -82,31 +84,55 @@ class BalitaResource extends Resource
             ->columns([
                 TextColumn::make('nik')->label('NIK')->searchable(),
                 TextColumn::make('nama')->label('Nama Balita')->searchable(),
-                
-                // --- KOLOM BARU DI TABEL ---
-                TextColumn::make('tanggal_lahir')
-                    ->label('Tgl Lahir')
-                    ->date('d M Y')
-                    ->sortable(),
-                
-                TextColumn::make('jenis_kelamin')
-                    ->label('JK')
-                    ->sortable(),
-                // -----------------------------
-
+                TextColumn::make('tanggal_lahir')->label('Tgl Lahir')->date('d M Y')->sortable(),
+                TextColumn::make('jenis_kelamin')->label('JK')->sortable(),
                 TextColumn::make('orang_tua')->label('Orang Tua'),
+                TextColumn::make('alamat')->label('Alamat'),
                 TextColumn::make('created_at')->label('Dibuat')->dateTime(),
             ])
+
+            // ✅ Tambahkan filter jenis kelamin & tanggal
             ->filters([
-                // Menambahkan filter berdasarkan Jenis Kelamin
                 SelectFilter::make('jenis_kelamin')
                     ->options([
                         'Laki-laki' => 'Laki-laki',
                         'Perempuan' => 'Perempuan',
                     ])
                     ->label('Jenis Kelamin'),
+
+                Filter::make('created_at')
+                    ->label('Tanggal Pendaftaran')
+                    ->form([
+                        FilterDatePicker::make('from')->label('Dari'),
+                        FilterDatePicker::make('until')->label('Sampai'),
+                    ])
+                    ->query(function ($query, array $data): void {
+                        $query
+                            ->when($data['from'], fn($q, $date) => $q->whereDate('created_at', '>=', $date))
+                            ->when($data['until'], fn($q, $date) => $q->whereDate('created_at', '<=', $date));
+                    }),
+            ])
+
+            // ✅ Tambahkan tombol export di header dan bulk action
+            ->headerActions([
+                FilamentExportHeaderAction::make('export')
+                    ->label('Export Data')
+                    ->button()
+                    ->fileName('data_balita')
+                    ->defaultFormat('pdf')
+                    ->disableXlsx()
+                    ->disableCsv()
+                    ->directDownload(),
+            ])
+            ->bulkActions([
+                FilamentExportBulkAction::make('export')
+                    ->label('Export yang Dipilih')
+                    ->button()
+                    ->fileName('data_balita')
+                    ->defaultFormat('pdf')
+                    ->disableXlsx()
+                    ->disableCsv(),
             ]);
-            // Bagian actions dan bulkActions lainnya tetap sama
     }
 
     public static function getPages(): array

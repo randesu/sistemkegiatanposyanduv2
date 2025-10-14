@@ -7,8 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #6a89cc; /* Biru lembut */
-            --secondary-color: #a4b0be; /* Abu-abu kebiruan */
+            --primary-color: #6a89cc;
+            --secondary-color: #a4b0be;
             --background-light: #f4f7f6;
             --text-dark: #333;
             --text-light: #fff;
@@ -26,32 +26,31 @@
             font-family: 'Poppins', sans-serif;
             background-color: var(--background-light);
             color: var(--text-dark);
-            overflow: hidden; /* Mencegah scroll yang tidak diinginkan */
+            overflow: hidden;
             position: relative;
         }
 
-        /* Desain latar belakang abstrak */
-        body::before {
+        body::before, body::after {
             content: '';
             position: absolute;
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        body::before {
             top: -20%;
             left: -20%;
             width: 80%;
             height: 80%;
             background: radial-gradient(circle at 10% 20%, rgba(106, 137, 204, 0.2) 0%, transparent 80%);
-            border-radius: 50%;
-            z-index: 0;
         }
+
         body::after {
-            content: '';
-            position: absolute;
             bottom: -20%;
             right: -20%;
             width: 70%;
             height: 70%;
             background: radial-gradient(circle at 90% 80%, rgba(164, 176, 190, 0.2) 0%, transparent 80%);
-            border-radius: 50%;
-            z-index: 0;
         }
 
         form {
@@ -60,10 +59,10 @@
             border-radius: var(--border-radius-main);
             box-shadow: var(--shadow-light);
             max-width: 400px;
-            width: 90%; /* Menggunakan persentase agar adaptif */
+            width: 90%;
             text-align: center;
             position: relative;
-            z-index: 1; /* Pastikan form di atas latar belakang */
+            z-index: 1;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -75,12 +74,11 @@
         h2 {
             font-size: 1.8rem;
             color: var(--primary-color);
-            /* margin-bottom: 2rem; */
             font-weight: 600;
         }
 
-        input[type="number"] {
-            width: calc(100% - 30px); /* Adjust width to account for padding */
+        input[type="text"] {
+            width: calc(100% - 30px);
             padding: 12px 15px;
             margin-bottom: 1.5rem;
             border: 1px solid #e0e6ed;
@@ -90,11 +88,11 @@
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-        input[type="number"]::placeholder {
+        input[type="text"]::placeholder {
             color: var(--secondary-color);
         }
 
-        input[type="number"]:focus {
+        input[type="text"]:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(106, 137, 204, 0.2);
@@ -132,52 +130,6 @@
             margin-bottom: 1rem;
             font-weight: 400;
         }
-
-        /* Responsif untuk layar lebih kecil */
-        @media (max-width: 600px) {
-            form {
-                padding: 2.5rem 2rem; /* Sedikit kurangi padding vertikal dan horizontal */
-                width: calc(100% - 40px); /* Berikan margin 20px di kiri dan kanan */
-                margin: 0 20px; /* Tambahkan margin horizontal */
-            }
-            h2 {
-                font-size: 1.6rem;
-                /* margin-bottom: 1.8rem; */
-            }
-            input[type="number"] {
-                width: calc(100% - 24px); /* Sesuaikan lebar input dengan padding baru */
-                padding: 10px 12px;
-                font-size: 0.95rem;
-            }
-            button {
-                padding: 11px 18px;
-                font-size: 1.05rem;
-            }
-        }
-
-        @media (max-width: 400px) { /* Khusus untuk layar sangat kecil */
-            form {
-                padding: 2rem 1.5rem; /* Kurangi padding lebih lanjut */
-                width: calc(100% - 30px); /* Margin 15px di kiri dan kanan */
-                margin: 0 15px;
-            }
-            h2 {
-                font-size: 1.4rem;
-                /* margin-bottom: 1.5rem; */
-            }
-            input[type="number"] {
-                width: calc(100% - 20px); /* Sesuaikan lebar input dengan padding baru */
-                padding: 9px 10px;
-                font-size: 0.9rem;
-            }
-            button {
-                padding: 10px 15px;
-                font-size: 1rem;
-            }
-            .error-message {
-                font-size: 0.85rem;
-            }
-        }
     </style>
 </head>
 <body>
@@ -185,10 +137,12 @@
         @csrf
         <h2>Portal Kesehatan</h2>
         <h2>Posyandu Bunga Tulip</h2>
-        <input type="number" name="balita_id" placeholder="Masukkan ID Balita" required>
-        @error('balita_id')
-            <p class="error-message">{{ $message }}</p>
-        @enderror
+        
+       <input type="text" name="nik" placeholder="Masukkan NIK Balita">
+@error('nik')
+    <p class="error-message">{{ $message }}</p>
+@enderror
+
         <button type="submit">Lihat Data</button>
     </form>
 </body>

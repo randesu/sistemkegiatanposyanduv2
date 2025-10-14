@@ -27,6 +27,7 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
+            ->brandName('Posyandu Bunga Tulip') 
             ->id('admin')
             ->path('admin')
              ->authGuard('petugas')

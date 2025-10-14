@@ -303,10 +303,15 @@
 <body>
     <div class="mobile-frame">
         <div class="header-section">
-            <a href="{{ route('balita.dashboard', ['id' => $balita->id]) }}" class="back-button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            </a>
-            <h1>Riwayat Pemeriksaan</h1>
+<form action="{{ route('balita.dashboard') }}" method="POST" style="display:inline;">
+    @csrf
+    <input type="hidden" name="nik" value="{{ $balita->nik }}">
+    <button type="submit" class="back-button" style="border:none; background:none; cursor:pointer;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+
+    </button>
+</form>
+            <h3>Riwayat Pemeriksaan</h3>
         </div>
 
         <div class="content-area">

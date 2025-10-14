@@ -21,9 +21,10 @@ Route::post('/dashboard-balita', [BalitaDataController::class, 'showData'])->nam
 // Halaman ini muncul setelah pengguna menekan kartu "Riwayat Pemeriksaan" di dashboard utama.
 // URL: /balita/{id}/pemeriksaan
 // Nama Rute: balita.hasil-pemeriksaan
-Route::get('/balita/{id}/pemeriksaan', [BalitaDataController::class, 'showPemeriksaan'])->name('balita.hasil-pemeriksaan');
+Route::post('/balita/pemeriksaan', [BalitaDataController::class, 'showPemeriksaan'])->name('balita.hasil-pemeriksaan');
 
-
+// Route::get('/dashboard-balita/{id}', [BalitaDataController::class, 'showDataById'])
+//     ->name('balita.dashboard');
 // Catatan: Jika ada rute Fortify/Livewire/Volt lainnya, mereka harus diletakkan di sini juga.
 //Route::post('/riwayat-balita', [BalitaDataController::class, ])->name('balita.data');
 

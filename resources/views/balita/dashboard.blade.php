@@ -379,7 +379,7 @@ background-color: #f0f4fa;
                 </div>
             </div>
 
-            <div class="quick-info-card">
+            <!-- <div class="quick-info-card">
                 <div class="quick-info-item">
                     <span class="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -416,7 +416,7 @@ background-color: #f0f4fa;
                     <strong>{{ $balita->hasilPemeriksaans->isNotEmpty() ? $balita->hasilPemeriksaans->sortByDesc('created_at')->first()->berat_badan . ' kg' : '?' }}</strong>
                     <span>Berat Terakhir</span>
                 </div>
-            </div>
+            </div> -->
 
             <div class="chart-card">
                 <h2>Grafik Pertumbuhan</h2>
@@ -426,14 +426,21 @@ background-color: #f0f4fa;
             </div>
 
             <div class="menu-grid">
-                <a href="{{ route('balita.hasil-pemeriksaan', ['id' => $balita->id]) }}" class="menu-card medical-record">
+                <!-- Bagian riwayat pemeriksaan -->
+                <form id="medicalRecordForm" action="{{ route('balita.hasil-pemeriksaan') }}" method="POST" style="display: none;">
+                    @csrf
+                    <input type="hidden" name="nik" value="{{ $balita->nik }}">
+                </form>
+                <a href="#" class="menu-card medical-record" onclick="document.getElementById('medicalRecordForm').submit(); return false;">
                     <span class="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M17 17h.01" />
                         </svg>
                     </span>
                     <span>Riwayat Pemeriksaan</span>
                 </a>
+
+
                 <a href="#" class="menu-card scheduled-visits">
                     <span class="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -462,7 +469,7 @@ background-color: #f0f4fa;
         </div> {{-- End of scrollable-content --}}
 
         {{-- Bottom Navigation --}}
-        <div class="bottom-nav">
+        <!-- <div class="bottom-nav">
             <a href="{{ route('balita.dashboard', $balita->id) }}" class="nav-item active">
                 <span class="icon">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
@@ -489,7 +496,7 @@ background-color: #f0f4fa;
                 </span>
                 <span>Pengaturan</span>
             </a>
-        </div>
+        </div> -->
     </div>
 
     <script>
@@ -545,8 +552,9 @@ background-color: #f0f4fa;
                         label: 'Berat Badan (kg)',
                         data: beratBadanData,
                         borderColor: chartLineColorBB, // Gunakan variabel JS
-                        backgroundColor: chartLineColorBB.replace(')', ', 0.1)').replace('rgb', 'rgba'), // Membuat background transparan
-                        borderWidth: 2,
+                        // backgroundColor: chartLineColorBB.replace(')', ', 0.1)').replace('rgb', 'rgba'), // Membuat background transparan
+                        // borderWidth: 2,
+                         borderDash: [5, 5],
                         fill: true,
                         tension: 0.4,
                         pointRadius: 5,
@@ -558,7 +566,7 @@ background-color: #f0f4fa;
                         label: 'Tinggi Badan (cm)',
                         data: tinggiBadanData,
                         borderColor: chartLineColorTB, // Gunakan variabel JS
-                        backgroundColor: chartLineColorTB.replace(')', ', 0.1)').replace('rgb', 'rgba'),
+                        // backgroundColor: chartLineColorTB.replace(')', ', 0.1)').replace('rgb', 'rgba'),
                         borderWidth: 2,
                         fill: true,
                         tension: 0.4,

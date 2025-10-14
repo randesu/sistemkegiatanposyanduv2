@@ -5,12 +5,12 @@ namespace App\Filament\Resources\Vitamins;
 use Filament\Tables;
 use App\Models\Vitamin;
 use Filament\Tables\Table;
-use Tables\Actions\EditAction;
 use Filament\Resources\Resource;
-use Tables\Actions\DeleteAction;
 use App\Filament\Resources\Vitamins\Pages;
-use Filament\Schemas\Schema; // Pastikan impor ini
-use Filament\Forms\Components; // Gunakan alias untuk Components
+use Filament\Schemas\Schema;
+use Filament\Forms\Components;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
 
 class VitaminResource extends Resource
 {
@@ -20,19 +20,15 @@ class VitaminResource extends Resource
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-beaker';
     protected static ?string $navigationLabel = 'Vitamin';
 
-    /**
-     * Tanda tangan (signature) yang BENAR untuk Filament v4 adalah Schema $schema
-     */
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([ // Panggil components() pada objek $schema
-                Components\TextInput::make('nama_vitamin') // Gunakan alias Components\TextInput
-                    ->label('Nama Vitamin')
-                    ->required()
-                    ->maxLength(100)
-                    ->unique(ignoreRecord: true),
-            ]);
+        return $schema->components([
+            Components\TextInput::make('nama_vitamin')
+                ->label('Nama Vitamin')
+                ->required()
+                ->maxLength(100)
+                ->unique(ignoreRecord: true),
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -55,24 +51,21 @@ class VitaminResource extends Resource
                     ->label('Dibuat Pada'),
             ])
             ->filters([
-                //
+                // Tambahkan filter jika diperlukan nanti
+            ])
+            ->headerActions([
+                // ✅ Tombol export di header (export semua data)
+                FilamentExportHeaderAction::make('export'),
+            ])
+            ->bulkActions([
+                // ✅ Export hanya data yang dipilih (checkbox)
+                FilamentExportBulkAction::make('export'),
             ]);
-            // ->actions([
-            //     EditAction::make(),
-            //     DeleteAction::make(),
-            // ])
-            // ->bulkActions([
-            //     Tables\Actions\BulkActionGroup::make([
-            //         Tables\Actions\DeleteBulkAction::make(),
-            //     ]),
-            // ]);
     }
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

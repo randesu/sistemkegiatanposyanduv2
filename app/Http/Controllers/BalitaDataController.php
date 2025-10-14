@@ -4,47 +4,53 @@ namespace App\Http\Controllers;
 
 use App\Models\Balita;
 use Illuminate\Http\Request;
-use Carbon\Carbon; // <--- Impor Carbon di sini
+use Carbon\Carbon;
 
 class BalitaDataController extends Controller
 {
     public function showForm()
     {
-        return view('balita.cek'); // form input ID balita
+        return view('balita.cek'); // form input NIK balita
     }
 
     public function showData(Request $request)
     {
         $request->validate([
-            'balita_id' => 'required|integer|exists:balitas,id',
+            'nik' => 'required|string|exists:balitas,nik',
         ], [
-            'balita_id.exists' => 'Data balita tidak ditemukan.',
+            'nik.exists' => 'Data balita dengan NIK tersebut tidak ditemukan.',
         ]);
 
-        // Load balita beserta hasil pemeriksaan untuk dashboard utama
-        // dan pastikan hasilPemeriksaans diurutkan berdasarkan tanggal
-        $balita = Balita::with(['hasilPemeriksaans' => function($query) {
-            $query->orderBy('created_at', 'asc'); // Urutkan dari terlama ke terbaru
-        }])->findOrFail($request->balita_id);
+        $balita = Balita::with(['hasilPemeriksaans' => function ($query) {
+            $query->orderBy('created_at', 'asc');
+        }])->where('nik', $request->nik)->firstOrFail();
 
-        // Set locale Carbon untuk memastikan 'translatedFormat' di Blade bekerja
-        Carbon::setLocale('id'); // <--- Set locale ke Bahasa Indonesia
+        Carbon::setLocale('id');
 
-        return view('balita.dashboard', compact('balita')); // Mengarahkan ke tampilan dashboard utama
+        return view('balita.dashboard', compact('balita'));
     }
 
-    /**
-     * Menampilkan halaman riwayat pemeriksaan lengkap untuk balita tertentu.
-     */
-    public function showPemeriksaan($balitaId)
+    public function showPemeriksaan(Request $request)
+{
+    $request->validate([
+        'nik' => 'required|exists:balitas,nik',
+    ]);
+
+    $balita = \App\Models\Balita::with(['hasilPemeriksaans.vaksins', 'hasilPemeriksaans.vitamins'])
+        ->where('nik', $request->nik)
+        ->firstOrFail();
+
+    \Carbon\Carbon::setLocale('id');
+
+    return view('balita.riwayat_pemeriksaan', compact('balita'));
+}
+
+
+    public function showDataById($id)
     {
-        // Memuat balita dan relasi hasilPemeriksaans,
-        // serta vaksins di setiap hasil pemeriksaan
-        $balita = Balita::with(['hasilPemeriksaans.vaksins'])->findOrFail($balitaId);
+        $balita = \App\Models\Balita::findOrFail($id);
 
-        // Set locale Carbon untuk memastikan 'translatedFormat' di Blade bekerja
-        Carbon::setLocale('id'); // <--- Set locale ke Bahasa Indonesia
-
-        return view('balita.riwayat_pemeriksaan', compact('balita')); // Tampilan tabel riwayat pemeriksaan
+        return view('dashboard', compact('balita'));
     }
+
 }
