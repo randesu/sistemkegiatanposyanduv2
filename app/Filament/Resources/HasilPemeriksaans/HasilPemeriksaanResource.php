@@ -24,6 +24,7 @@ class HasilPemeriksaanResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
+            // Input Data Utama Pemeriksaan
             Select::make('balita_id')
                 ->label('Balita')
                 ->relationship('balita', 'nama')
@@ -37,11 +38,23 @@ class HasilPemeriksaanResource extends Resource
             TextInput::make('tinggi')->label('Tinggi (cm)')->numeric()->required(),
             TextInput::make('berat_badan')->label('Berat Badan (kg)')->numeric()->required(),
             Textarea::make('catatan')->label('Catatan'),
-
+            
+            // --- INPUT RELASI MANY-TO-MANY ---
+            
+            // Relasi Vaksin (sudah ada)
             MultiSelect::make('vaksins')
                 ->label('Vaksin Diberikan')
                 ->relationship('vaksins', 'nama_vaksin')
                 ->preload(),
+                
+            // Relasi Vitamin (BARU)
+            MultiSelect::make('vitamins') // Nama relasi harus sama dengan fungsi di model (vitamins())
+                ->label('Vitamin Diberikan')
+                ->relationship('vitamins', 'nama_vitamin') // Gunakan model Vitamin dan kolom nama_vitamin
+                ->preload()
+                ->helperText('Pilih vitamin yang diberikan pada pemeriksaan ini.'),
+
+            // ---------------------------------
         ]);
     }
 
@@ -52,7 +65,18 @@ class HasilPemeriksaanResource extends Resource
             TextColumn::make('petugas.name')->label('Petugas'),
             TextColumn::make('tinggi')->label('Tinggi (cm)'),
             TextColumn::make('berat_badan')->label('Berat (kg)'),
-            // TextColumn::make('created_at')->label('Tanggal Pemeriksaan')->dateTime(),
+            
+            // Menampilkan daftar Vaksin yang diberikan (Opsional, tapi membantu)
+            TextColumn::make('vaksins.nama_vaksin')
+                ->label('Vaksin')
+                ->badge(), // Menampilkan daftar sebagai lencana
+
+            // Menampilkan daftar Vitamin yang diberikan (BARU)
+            TextColumn::make('vitamins.nama_vitamin')
+                ->label('Vitamin')
+                ->badge(), // Menampilkan daftar sebagai lencana
+
+            TextColumn::make('created_at')->label('Tanggal Pemeriksaan')->dateTime(),
         ]);
     }
 

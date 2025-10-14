@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Balita</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary-color: #6a89cc; /* Biru lembut */
@@ -21,6 +22,12 @@
             --border-radius-card: 18px; /* Radius untuk kartu individu */
             --shadow-light: 0 8px 30px rgba(0, 0, 0, 0.08);
             --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
+
+            /* Warna untuk Chart */
+            --chart-line-color-bb: #4CAF50; /* Hijau untuk Berat Badan */
+            --chart-line-color-tb: #2196F3; /* Biru untuk Tinggi Badan */
+            --chart-grid-color: rgba(0, 0, 0, 0.05);
+            --chart-text-color: var(--text-muted);
         }
 
         body {
@@ -63,35 +70,33 @@
         }
 
         .mobile-frame {
-            background-color: var(--card-background); /* Menggunakan warna card untuk frame */
+            background-color: var(--card-background);
             border-radius: var(--border-radius-main);
             box-shadow: var(--shadow-light);
             width: 100%;
-            max-width: 375px; /* Ukuran umum layar ponsel */
-            height: 812px; /* Tinggi umum layar ponsel */
-            overflow-y: auto; /* Memungkinkan scroll di dalam frame */
+            max-width: 375px;
+            height: 812px;
+            overflow-y: auto;
             overflow-x: hidden;
             position: relative;
-            z-index: 1; /* Agar di atas latar belakang abstrak */
+            z-index: 1;
             display: flex;
             flex-direction: column;
-            /* Hapus padding-bottom: 70px; karena bottom-nav sekarang sticky di dalam */
         }
 
-        /* Konten utama yang bisa discroll */
         .scrollable-content {
-            flex-grow: 1; /* Memastikan konten mengisi sisa ruang */
-            padding-bottom: 70px; /* Tambahkan padding agar konten tidak tertutup bottom-nav */
+            flex-grow: 1;
+            padding-bottom: 70px;
         }
 
         /* ----- Header Profil ----- */
         .profile-header {
             padding: 25px;
-            padding-top: 40px; /* Padding atas lebih besar */
+            padding-top: 40px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: linear-gradient(135deg, #e0e9f8, #f0f4fa); /* Gradien untuk header */
+            background: linear-gradient(135deg, #e0e9f8, #f0f4fa);
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
             margin-bottom: 20px;
@@ -116,31 +121,30 @@
         }
 
         .profile-avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    overflow: hidden; /* Penting agar bagian gambar yang terpotong tidak terlihat */
-    /* margin-left: 20px; */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border: 3px solid var(--text-light);
-}
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: 3px solid var(--text-light);
+        }
 
-.profile-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* <--- Tambahkan atau pastikan ini ada */
-    display: block; /* Opsional: Menghilangkan sedikit spasi di bawah gambar */
-}
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
 
         /* ----- Info Balita Cepat ----- */
         .quick-info-card {
             background: var(--text-light);
             border-radius: var(--border-radius-card);
-            margin: 0 25px 20px 25px; /* Margin horizontal konsisten */
+            margin: 0 25px 20px 25px;
             padding: 20px 25px;
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2 kolom */
-            gap: 15px 10px; /* Jarak antar item */
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px 10px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
 
@@ -166,25 +170,51 @@
             width: 30px;
             height: 30px;
             margin-bottom: 8px;
-            color: var(--primary-color); /* Warna ikon */
+            color: var(--primary-color);
         }
-        /* Menggunakan SVG dari Heroicons atau ikon library lain */
         .quick-info-item .icon svg {
             width: 100%;
             height: 100%;
         }
 
+        /* ----- Chart Card Styling ----- */
+        .chart-card {
+            background: white;
+            border-radius: var(--border-radius-card);
+            margin: 0 25px 20px 25px; /* Margin konsisten dengan quick-info-card */
+            padding: 20px 25px;
+            box-shadow: var(--shadow-light);
+            /* min-height: 250px; Tambahkan tinggi minimum agar chart terlihat */
+        }
+
+        .chart-card h2 {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Adjust canvas size within card */
+        .chart-container {
+background-color: #f0f4fa;
+            position: relative;
+            height: 200px; /* Tinggi spesifik untuk chart */
+            width: 100%;
+        }
+
         /* ----- Menu Kartu ----- */
         .menu-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 kolom */
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
-            padding: 0 25px; /* Padding horizontal konsisten */
+            padding: 0 25px;
             margin-bottom: 25px;
         }
 
         .menu-card {
-            background-color: var(--card-bg-1); /* Default background */
+            background-color: var(--card-bg-1);
             border-radius: var(--border-radius-card);
             padding: 20px;
             display: flex;
@@ -192,7 +222,7 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            min-height: 120px; /* Tinggi minimum kartu */
+            min-height: 120px;
             text-decoration: none;
             color: var(--text-dark);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
@@ -208,7 +238,7 @@
             width: 45px;
             height: 45px;
             margin-bottom: 15px;
-            color: var(--text-light); /* Ikon putih default */
+            color: var(--text-light);
         }
         .menu-card .icon svg {
             width: 100%;
@@ -223,21 +253,21 @@
 
         /* Warna spesifik untuk kartu menu */
         .menu-card.medical-record { background-color: var(--card-bg-1); }
-        .menu-card.medical-record .icon { color: var(--primary-color); } /* Ubah warna ikon menjadi primary */
+        .menu-card.medical-record .icon { color: var(--primary-color); }
 
         .menu-card.scheduled-visits { background-color: var(--card-bg-2); }
-        .menu-card.scheduled-visits .icon { color: var(--text-light); } /* Ikon putih */
+        .menu-card.scheduled-visits .icon { color: var(--text-light); }
 
         .menu-card.detailed-info { background-color: var(--card-bg-3); }
-        .menu-card.detailed-info .icon { color: var(--text-dark); } /* Ikon hitam */
+        .menu-card.detailed-info .icon { color: var(--text-dark); }
 
         .menu-card.vaccination-schedule { background-color: var(--card-bg-4); }
-        .menu-card.vaccination-schedule .icon { color: var(--text-dark); } /* Ikon hitam */
+        .menu-card.vaccination-schedule .icon { color: var(--text-dark); }
 
 
         /* ----- Bottom Navigation (Updated) ----- */
         .bottom-nav {
-            position: sticky; /* Kunci perubahan utama */
+            position: sticky;
             bottom: 0;
             width: 100%;
             background: var(--text-light);
@@ -249,8 +279,8 @@
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
             z-index: 10;
-            flex-shrink: 0; /* Mencegah shrink ketika konten lain flex-grow */
-            margin-top: auto; /* Pastikan menempel di bagian bawah flex container */
+            flex-shrink: 0;
+            margin-top: auto;
         }
 
         .nav-item {
@@ -283,7 +313,7 @@
         /* Responsif untuk tinggi frame mobile */
         @media (max-height: 850px) {
             .mobile-frame {
-                height: 90vh; /* Sesuaikan tinggi agar tidak terpotong */
+                height: 90vh;
             }
         }
         @media (max-height: 700px) {
@@ -295,8 +325,8 @@
         /* Responsif untuk lebar layar */
         @media (max-width: 400px) {
             .mobile-frame {
-                max-width: 100%; /* Mengisi penuh lebar */
-                border-radius: 0; /* Tanpa radius jika mengisi penuh */
+                max-width: 100%;
+                border-radius: 0;
             }
             .profile-header {
                 padding: 20px;
@@ -305,9 +335,8 @@
             .profile-info h1 {
                 font-size: 2rem;
             }
-            .quick-info-card, .menu-grid {
+            .quick-info-card, .chart-card, .menu-grid { /* Tambahkan chart-card di sini */
                 margin: 0 15px 15px 15px;
-                /* padding: 0 15px; Sesuaikan padding grid juga */
             }
             .menu-grid {
                 gap: 10px;
@@ -328,6 +357,12 @@
                 max-width: 100%;
                 border-radius: 0;
             }
+            .chart-card h2 {
+                font-size: 1rem;
+            }
+            .chart-container {
+                height: 180px; /* Sesuaikan tinggi chart untuk mobile */
+            }
         }
     </style>
 </head>
@@ -336,7 +371,7 @@
         <div class="scrollable-content"> {{-- Wrapper untuk konten yang bisa discroll --}}
             <div class="profile-header">
                 <div class="profile-info">
-                    <span class="date">{{ \Carbon\Carbon::now()->format('d M, Y') }}</span>
+                    <p style="margin: 0;padding: 0;">Selamat Datang,</p>
                     <h1>{{ $balita->nama ?? 'Nama Balita' }}</h1>
                 </div>
                 <div class="profile-avatar">
@@ -369,7 +404,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5m18 7.5v-7.5" />
                         </svg>
                     </span>
-                    <strong>{{ $balita->tanggal_lahir ? \Carbon\Carbon::parse($balita->tanggal_lahir)->format('d.m.y') : '?' }}</strong>
+                    <strong>{{ $balita->tanggal_lahir ? \Carbon\Carbon::parse($balita->tanggal_lahir)->translatedFormat('d F Y') : '?' }}</strong>
                     <span>Tgl Lahir</span>
                 </div>
                 <div class="quick-info-item">
@@ -380,6 +415,13 @@
                     </span>
                     <strong>{{ $balita->hasilPemeriksaans->isNotEmpty() ? $balita->hasilPemeriksaans->sortByDesc('created_at')->first()->berat_badan . ' kg' : '?' }}</strong>
                     <span>Berat Terakhir</span>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h2>Grafik Pertumbuhan</h2>
+                <div class="chart-container">
+                    <canvas id="growthChart"></canvas>
                 </div>
             </div>
 
@@ -449,5 +491,147 @@
             </a>
         </div>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. Ambil data dari PHP
+        // Pastikan variabel $balita->hasilPemeriksaans tidak null dan merupakan array/koleksi
+        const pemeriksaanData = @json($balita->hasilPemeriksaans->sortBy('created_at')->values()->all() ?? []);
+
+        const chartCard = document.querySelector('.chart-card');
+        const chartContainer = document.querySelector('.chart-container');
+
+        // 2. Cek apakah data ada
+        if (!pemeriksaanData || pemeriksaanData.length === 0) {
+            // Tampilkan pesan jika tidak ada data pemeriksaan
+            if (chartCard) {
+                chartCard.innerHTML = `
+                    <h2 style="color: var(--primary-color);">Grafik Pertumbuhan</h2>
+                    <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; padding: 10px 0;">
+                        Belum ada data pemeriksaan untuk menampilkan grafik.
+                    </p>
+                `;
+                // Atur tinggi card agar terlihat bagus
+                chartCard.style.paddingTop = '30px';
+                chartCard.style.paddingBottom = '30px';
+            }
+            return; // Hentikan eksekusi script jika tidak ada data
+        }
+
+        // 3. Jika data ada, siapkan data untuk Chart.js
+        const labels = pemeriksaanData.map(p => {
+            const date = new Date(p.created_at);
+            // Gunakan 'id-ID' untuk format tanggal lokal
+            return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+        });
+        const beratBadanData = pemeriksaanData.map(p => p.berat_badan);
+        const tinggiBadanData = pemeriksaanData.map(p => p.tinggi);
+
+        // 4. Ambil nilai CSS (Jika Anda menggunakan variabel CSS di Chart.js)
+        const style = getComputedStyle(document.documentElement);
+        const chartLineColorBB = style.getPropertyValue('--chart-line-color-bb').trim();
+        const chartLineColorTB = style.getPropertyValue('--chart-line-color-tb').trim();
+        const chartGridColor = style.getPropertyValue('--chart-grid-color').trim();
+        const chartTextColor = style.getPropertyValue('--chart-text-color').trim();
+        
+        // 5. Inisialisasi Chart
+        const ctx = document.getElementById('growthChart').getContext('2d');
+        const growthChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Berat Badan (kg)',
+                        data: beratBadanData,
+                        borderColor: chartLineColorBB, // Gunakan variabel JS
+                        backgroundColor: chartLineColorBB.replace(')', ', 0.1)').replace('rgb', 'rgba'), // Membuat background transparan
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: chartLineColorBB,
+                        pointBorderColor: 'var(--text-light)',
+                        pointHoverRadius: 7,
+                    },
+                    {
+                        label: 'Tinggi Badan (cm)',
+                        data: tinggiBadanData,
+                        borderColor: chartLineColorTB, // Gunakan variabel JS
+                        backgroundColor: chartLineColorTB.replace(')', ', 0.1)').replace('rgb', 'rgba'),
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: chartLineColorTB,
+                        pointBorderColor: 'var(--text-light)',
+                        pointHoverRadius: 7,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            font: { family: 'Poppins', size: 10 },
+                            color: chartTextColor,
+                            boxWidth: 15,
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        titleFont: { family: 'Poppins', size: 12 },
+                        bodyFont: { family: 'Poppins', size: 10 },
+                        padding: 10,
+                        displayColors: true,
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: false,
+                        grid: {
+                            display: true,
+                            drawBorder: false,
+                            color: chartGridColor
+                        },
+                        ticks: {
+                            font: { family: 'Poppins', size: 10 },
+                            color: chartTextColor
+                        },
+                        title: {
+                            display: true,
+                            text: 'Tanggal Pemeriksaan',
+                            color: chartTextColor,
+                            font: { family: 'Poppins', size: 11, weight: '500' }
+                        }
+                    },
+                    y: {
+                        beginAtZero: false,
+                        grid: {
+                            display: true,
+                            drawBorder: false,
+                            color: chartGridColor
+                        },
+                        ticks: {
+                            font: { family: 'Poppins', size: 10 },
+                            color: chartTextColor
+                        },
+                        title: {
+                            display: true,
+                            text: 'Berat (kg) / Tinggi (cm)',
+                            color: chartTextColor,
+                            font: { family: 'Poppins', size: 11, weight: '500' }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
 </body>
 </html>

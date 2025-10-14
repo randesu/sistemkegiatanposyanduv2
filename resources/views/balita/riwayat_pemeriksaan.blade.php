@@ -318,41 +318,59 @@
                             <span class="indicator">&#9660;</span> {{-- Panah ke bawah --}}
                         </div>
                         <div class="accordion-content">
-                            <div class="content-detail-item">
-                                <strong>Usia Balita:</strong>
-                                <span>
-                                    @if ($balita->tanggal_lahir)
-                                        {{ \Carbon\Carbon::parse($balita->tanggal_lahir)->diffInMonths($pemeriksaan->created_at) }} Bulan
-                                    @else
-                                        N/A
-                                    @endif
-                                </span>
-                            </div>
-                            <div class="content-detail-item">
-                                <strong>Berat Badan:</strong>
-                                <span>{{ $pemeriksaan->berat_badan }} kg</span>
-                            </div>
-                            <div class="content-detail-item">
-                                <strong>Tinggi Badan:</strong>
-                                <span>{{ $pemeriksaan->tinggi }} cm</span>
-                            </div>
-                            <div class="content-detail-item vaccine-list">
-                                <strong>Vaksin Diberikan:</strong>
-                                <span>
-                                    @if ($pemeriksaan->vaksins->isNotEmpty())
-                                        @foreach ($pemeriksaan->vaksins as $vaksin)
-                                            {{ $vaksin->nama_vaksin }} (Dosis {{ $vaksin->pivot->dosis ?? '?' }})<br>
-                                        @endforeach
-                                    @else
-                                        Tidak ada vaksin
-                                    @endif
-                                </span>
-                            </div>
-                            <div class="content-detail-item">
-                                <strong>Catatan Petugas:</strong>
-                                <span>{{ $pemeriksaan->catatan ?? '-' }}</span>
-                            </div>
-                        </div>
+    <div class="content-detail-item">
+        <strong>Usia Balita:</strong>
+        <span>
+            @if ($balita->tanggal_lahir)
+                {{ \Carbon\Carbon::parse($balita->tanggal_lahir)->diffInMonths($pemeriksaan->created_at) }} Bulan
+            @else
+                N/A
+            @endif
+        </span>
+    </div>
+    <div class="content-detail-item">
+        <strong>Berat Badan:</strong>
+        <span>{{ $pemeriksaan->berat_badan }} kg</span>
+    </div>
+    <div class="content-detail-item">
+        <strong>Tinggi Badan:</strong>
+        <span>{{ $pemeriksaan->tinggi }} cm</span>
+    </div>
+    <div class="content-detail-item vaccine-list">
+        <strong>Vaksin Diberikan:</strong>
+        <span>
+            @if ($pemeriksaan->vaksins->isNotEmpty())
+                @foreach ($pemeriksaan->vaksins as $vaksin)
+                    {{ $vaksin->nama_vaksin }} (Dosis {{ $vaksin->pivot->dosis ?? '?' }})<br>
+                @endforeach
+            @else
+                Tidak ada vaksin
+            @endif
+        </span>
+    </div>
+
+    {{-- BAGIAN BARU UNTUK VITAMIN --}}
+    <div class="content-detail-item vitamin-list">
+        <strong>Vitamin Diberikan:</strong>
+        <span>
+            {{-- Menggunakan relasi vitamins() dari model HasilPemeriksaan --}}
+            @if ($pemeriksaan->vitamins->isNotEmpty())
+                @foreach ($pemeriksaan->vitamins as $vitamin)
+                    {{ $vitamin->nama_vitamin }}<br>
+                @endforeach
+            @else
+                Tidak ada vitamin
+            @endif
+        </span>
+    </div>
+    {{-- AKHIR BAGIAN BARU --}}
+
+    <div class="content-detail-item">
+        <strong>Catatan Petugas:</strong>
+        <span>{{ $pemeriksaan->catatan ?? '-' }}</span>
+    </div>
+</div>
+
                     </div>
                 @endforeach
             @else

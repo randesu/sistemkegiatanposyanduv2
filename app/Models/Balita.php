@@ -18,6 +18,10 @@ class Balita extends Authenticatable
         'nama',
         'orang_tua',
         'password',
+        'alamat',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'jenis_kelamin',
     ];
 
     protected $hidden = [

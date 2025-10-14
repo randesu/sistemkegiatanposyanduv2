@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Balita;
 use Illuminate\Http\Request;
+use Carbon\Carbon; // <--- Impor Carbon di sini
 
 class BalitaDataController extends Controller
 {
@@ -21,8 +22,13 @@ class BalitaDataController extends Controller
         ]);
 
         // Load balita beserta hasil pemeriksaan untuk dashboard utama
-        // Kita tidak perlu memuat vaksin di sini karena dashboard utama hanya menampilkan ringkasan
-        $balita = Balita::with('hasilPemeriksaans')->findOrFail($request->balita_id);
+        // dan pastikan hasilPemeriksaans diurutkan berdasarkan tanggal
+        $balita = Balita::with(['hasilPemeriksaans' => function($query) {
+            $query->orderBy('created_at', 'asc'); // Urutkan dari terlama ke terbaru
+        }])->findOrFail($request->balita_id);
+
+        // Set locale Carbon untuk memastikan 'translatedFormat' di Blade bekerja
+        Carbon::setLocale('id'); // <--- Set locale ke Bahasa Indonesia
 
         return view('balita.dashboard', compact('balita')); // Mengarahkan ke tampilan dashboard utama
     }
@@ -36,8 +42,8 @@ class BalitaDataController extends Controller
         // serta vaksins di setiap hasil pemeriksaan
         $balita = Balita::with(['hasilPemeriksaans.vaksins'])->findOrFail($balitaId);
 
-        // Pastikan Anda telah menambahkan 'tanggal_lahir' dan 'jenis_kelamin'
-        // ke model Balita dan database seperti yang didiskusikan sebelumnya.
+        // Set locale Carbon untuk memastikan 'translatedFormat' di Blade bekerja
+        Carbon::setLocale('id'); // <--- Set locale ke Bahasa Indonesia
 
         return view('balita.riwayat_pemeriksaan', compact('balita')); // Tampilan tabel riwayat pemeriksaan
     }

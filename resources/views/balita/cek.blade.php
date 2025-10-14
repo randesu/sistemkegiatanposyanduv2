@@ -75,7 +75,7 @@
         h2 {
             font-size: 1.8rem;
             color: var(--primary-color);
-            margin-bottom: 2rem;
+            /* margin-bottom: 2rem; */
             font-weight: 600;
         }
 
@@ -142,7 +142,7 @@
             }
             h2 {
                 font-size: 1.6rem;
-                margin-bottom: 1.8rem;
+                /* margin-bottom: 1.8rem; */
             }
             input[type="number"] {
                 width: calc(100% - 24px); /* Sesuaikan lebar input dengan padding baru */
@@ -163,7 +163,7 @@
             }
             h2 {
                 font-size: 1.4rem;
-                margin-bottom: 1.5rem;
+                /* margin-bottom: 1.5rem; */
             }
             input[type="number"] {
                 width: calc(100% - 20px); /* Sesuaikan lebar input dengan padding baru */
@@ -183,7 +183,8 @@
 <body>
     <form action="{{ route('balita.dashboard') }}" method="POST">
         @csrf
-        <h2>Cek Data Balita</h2>
+        <h2>Portal Kesehatan</h2>
+        <h2>Posyandu Bunga Tulip</h2>
         <input type="number" name="balita_id" placeholder="Masukkan ID Balita" required>
         @error('balita_id')
             <p class="error-message">{{ $message }}</p>
