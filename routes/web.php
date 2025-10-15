@@ -23,6 +23,22 @@ Route::post('/dashboard-balita', [BalitaDataController::class, 'showData'])->nam
 // Nama Rute: balita.hasil-pemeriksaan
 Route::post('/balita/pemeriksaan', [BalitaDataController::class, 'showPemeriksaan'])->name('balita.hasil-pemeriksaan');
 
+Route::post('/balita/detail', [BalitaDataController::class, 'showDetail'])->name('balita.detail');
+
+// Route::post('/balita/id-card', function (Request $request) {
+//     $balita = BalitaDataController::where('nik', $request->nik)->firstOrFail();
+//     return view('balita.id_card', compact('balita'));
+// })->name('balita.id-card');
+
+Route::post('/balita/id-card', [BalitaDataController::class, 'showIdCard'])->name('balita.id-card');
+
+use App\Models\Balita;
+
+Route::get('/api/get-balita-by-nik', function (\Illuminate\Http\Request $request) {
+    $balita = Balita::where('nik', $request->nik)->first();
+    return $balita ? response()->json($balita) : response()->json([]);
+});
+
 // Route::get('/dashboard-balita/{id}', [BalitaDataController::class, 'showDataById'])
 //     ->name('balita.dashboard');
 // Catatan: Jika ada rute Fortify/Livewire/Volt lainnya, mereka harus diletakkan di sini juga.

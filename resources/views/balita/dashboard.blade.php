@@ -440,16 +440,11 @@ background-color: #f0f4fa;
                     <span>Riwayat Pemeriksaan</span>
                 </a>
 
-
-                <a href="#" class="menu-card scheduled-visits">
-                    <span class="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h.01M7 12h.01M7 15h.01M7 18h.01M16 12h.01M16 15h.01M16 18h.01M3 20h18a2 2 0 002-2V8a2 2 0 00-2-2H3a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                    </span>
-                    <span>Jadwal Kunjungan</span>
-                </a>
-                <a href="#" class="menu-card detailed-info">
+                <form id="balitaDetailForm" action="{{ route('balita.detail') }}" method="POST" style="display: none;">
+                    @csrf
+                    <input type="hidden" name="nik" value="{{ $balita->nik }}">
+                </form>
+                <a href="#" class="menu-card detailed-info" onclick="document.getElementById('balitaDetailForm').submit(); return false;">
                     <span class="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -457,14 +452,30 @@ background-color: #f0f4fa;
                     </span>
                     <span>Info Detail Balita</span>
                 </a>
-                <a href="#" class="menu-card vaccination-schedule">
+
+
+                <form id="idCardForm" action="{{ route('balita.id-card') }}" method="POST" style="display: none;">
+                    @csrf
+                    <input type="hidden" name="nik" value="{{ $balita->nik }}">
+                </form>
+                <a href="#" class="menu-card scheduled-visits" onclick="document.getElementById('idCardForm').submit(); return false;">
+                    <span class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h.01M7 12h.01M7 15h.01M7 18h.01M16 12h.01M16 15h.01M16 18h.01M3 20h18a2 2 0 002-2V8a2 2 0 00-2-2H3a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </span>
+                    <span>ID Card</span>
+                </a>
+                
+
+                <!-- <a href="#" class="menu-card vaccination-schedule">
                     <span class="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </span>
                     <span>Jadwal Vaksinasi</span>
-                </a>
+                </a> -->
             </div>
         </div> {{-- End of scrollable-content --}}
 

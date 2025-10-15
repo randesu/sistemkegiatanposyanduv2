@@ -53,4 +53,24 @@ class BalitaDataController extends Controller
         return view('dashboard', compact('balita'));
     }
 
+    public function showDetail(Request $request, Balita $balita = null)
+    {
+        // Jika menggunakan POST dan NIK dikirim via form
+        if ($request->has('nik')) {
+            $balita = Balita::where('nik', $request->input('nik'))->firstOrFail();
+        } elseif (!$balita) {
+            // Jika tidak ada parameter balita di URL dan tidak ada NIK di request
+            abort(404, 'Data balita tidak ditemukan.');
+        }
+
+        return view('balita.detail', compact('balita'));
+    }
+
+    public function showIdCard(Request $request)
+    {
+        $request->validate(['nik' => 'required|exists:balitas,nik']);
+        $balita = Balita::where('nik', $request->nik)->firstOrFail();
+        return view('balita.id_card', compact('balita'));
+    }
+
 }

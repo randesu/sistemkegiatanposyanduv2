@@ -18,6 +18,8 @@ use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\DatePicker as FilterDatePicker;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
+use Filament\Forms\Components\ViewField; // tambahkan di atas bersama import lainnya
+
 
 class HasilPemeriksaanResource extends Resource
 {
@@ -30,6 +32,13 @@ class HasilPemeriksaanResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
+
+            ViewField::make('qr_scanner')
+    ->view('components.qr-scanner')
+    ->columnSpanFull()
+    ->helperText('Arahkan kamera ke QR Balita untuk mengisi data otomatis.'),
+
+
             Select::make('balita_id')
                 ->label('Balita')
                 ->relationship('balita', 'nama')
