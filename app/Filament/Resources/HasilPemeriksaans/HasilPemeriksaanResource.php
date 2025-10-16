@@ -18,9 +18,12 @@ use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\DatePicker as FilterDatePicker;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
-use Filament\Forms\Components\ViewField; // tambahkan di atas bersama import lainnya
 
+use JeffersonGoncalves\Filament\QrCodeField\Forms\Components\QrCodeInput;
 
+use App\Models\Balita;
+
+use Filament\Forms\Components\ViewField;
 class HasilPemeriksaanResource extends Resource
 {
     protected static ?string $model = HasilPemeriksaan::class;
@@ -31,40 +34,45 @@ class HasilPemeriksaanResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema->components([
+        
+    return $schema->components([
 
-            ViewField::make('qr_scanner')
-    ->view('components.qr-scanner')
-    ->columnSpanFull()
-    ->helperText('Arahkan kamera ke QR Balita untuk mengisi data otomatis.'),
+        // ✅ Tambahkan field scanner di awal form
+    //    QrCodeInput::make('qrcode')
+    //                 ->label('QR Code')
+    //                 ->placeholder('Scan QR code')
+    //                 ->required(),
+        
+    //                 ViewField::make('scanner')
+    // ->view('filament.forms.components.qr-scanner'),
+            
 
+        Select::make('balita_id')
+            ->label('Balita')
+            ->relationship('balita', 'nama')
+            ->required(),
 
-            Select::make('balita_id')
-                ->label('Balita')
-                ->relationship('balita', 'nama')
-                ->required(),
+        Select::make('petugas_id')
+            ->label('Petugas Posyandu')
+            ->relationship('petugas', 'name')
+            ->required(),
 
-            Select::make('petugas_id')
-                ->label('Petugas Posyandu')
-                ->relationship('petugas', 'name')
-                ->required(),
+        TextInput::make('tinggi')->label('Tinggi (cm)')->numeric()->required(),
+        TextInput::make('berat_badan')->label('Berat Badan (kg)')->numeric()->required(),
+        Textarea::make('catatan')->label('Catatan'),
 
-            TextInput::make('tinggi')->label('Tinggi (cm)')->numeric()->required(),
-            TextInput::make('berat_badan')->label('Berat Badan (kg)')->numeric()->required(),
-            Textarea::make('catatan')->label('Catatan'),
+        MultiSelect::make('vaksins')
+            ->label('Vaksin Diberikan')
+            ->relationship('vaksins', 'nama_vaksin')
+            ->preload(),
 
-            MultiSelect::make('vaksins')
-                ->label('Vaksin Diberikan')
-                ->relationship('vaksins', 'nama_vaksin')
-                ->preload(),
-
-            MultiSelect::make('vitamins')
-                ->label('Vitamin Diberikan')
-                ->relationship('vitamins', 'nama_vitamin')
-                ->preload()
-                ->helperText('Pilih vitamin yang diberikan pada pemeriksaan ini.'),
-        ]);
-    }
+        MultiSelect::make('vitamins')
+            ->label('Vitamin Diberikan')
+            ->relationship('vitamins', 'nama_vitamin')
+            ->preload()
+            ->helperText('Pilih vitamin yang diberikan pada pemeriksaan ini.'),
+    ]);
+}
 
     public static function table(Table $table): Table
     {
