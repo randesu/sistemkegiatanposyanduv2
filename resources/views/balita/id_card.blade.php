@@ -417,6 +417,21 @@
                         </div>
                         {{-- Tambahkan detail lain yang relevan jika ada --}}
                     </div>
+                    <div style="text-align:center; margin-top:25px;">
+    <button id="downloadCardBtn" 
+        style="padding:10px 20px;
+               background: var(--secondary-color);
+               border:none;
+               border-radius: 25px;
+               color:white;
+               font-weight:600;
+               cursor:pointer;
+               box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+               transition:all 0.3s ease;">
+        Unduh ID Card (JPG)
+    </button>
+</div>
+
                 </div>
             </div>
         </div>
@@ -431,38 +446,84 @@
         </div>
     </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const nikText = document.getElementById('nikText');
-    const qrContainer = document.getElementById('qrContainer');
-    const qrCodeDiv = document.getElementById('qrcode');
-    let qrVisible = false;
-    let qr = null;
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-    nikText.addEventListener('click', function() {
-        const nik = "{{ $balita->nik }}";
-        if (!qrVisible) {
-            qrContainer.style.display = 'block';
-            if (!qr) {
-                qr = new QRCode(qrCodeDiv, {
-                    text: nik,
-                    width: 160,
-                    height: 160,
-                    colorDark: "#000000ff",
-                    colorLight: "transparent",
-                    correctLevel: QRCode.CorrectLevel.H
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const downloadBtn = document.getElementById('downloadCardBtn');
+        const idCard = document.querySelector('.id-card-container');
+
+        downloadBtn.addEventListener('click', function () {
+            downloadBtn.innerText = 'Memproses...';
+            downloadBtn.disabled = true;
+
+            setTimeout(() => {
+                html2canvas(idCard, {
+                    scale: 3,
+                    backgroundColor: null,
+                    useCORS: true,
+                    logging: false
+                }).then(canvas => {
+                    canvas.toBlob(blob => {
+                        if (window.navigator.msSaveOrOpenBlob) {
+                            window.navigator.msSaveOrOpenBlob(blob, 'idcard.jpg');
+                        } else {
+                            const link = document.createElement('a');
+                            link.href = URL.createObjectURL(blob);
+                            const nama = "{{ Str::slug($balita->nama ?? 'balita', '_') }}";
+                            link.download = `idcard_${nama}.jpg`;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            URL.revokeObjectURL(link.href);
+                        }
+
+                        downloadBtn.innerText = 'Unduh ID Card (JPG)';
+                        downloadBtn.disabled = false;
+                    }, 'image/jpeg', 1.0);
+                }).catch(err => {
+                    console.error('Gagal membuat gambar:', err);
+                    alert('Terjadi kesalahan saat membuat ID Card. Coba lagi.');
+                    downloadBtn.innerText = 'Unduh ID Card (JPG)';
+                    downloadBtn.disabled = false;
                 });
-            }
-        } else {
-            qrContainer.style.display = 'none';
-            qrCodeDiv.innerHTML = ""; // hapus QR sebelumnya
-            qr = null;
-        }
-        qrVisible = !qrVisible;
+            }, 300);
+        });
     });
-});
-</script>
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const nikText = document.getElementById('nikText');
+        const qrContainer = document.getElementById('qrContainer');
+        const qrCodeDiv = document.getElementById('qrcode');
+        let qrVisible = false;
+        let qr = null;
+
+        nikText.addEventListener('click', function() {
+            const nik = "{{ $balita->nik }}";
+            if (!qrVisible) {
+                qrContainer.style.display = 'block';
+                if (!qr) {
+                    qr = new QRCode(qrCodeDiv, {
+                        text: nik,
+                        width: 160,
+                        height: 160,
+                        colorDark: "#000000",
+                        colorLight: "transparent",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                }
+            } else {
+                qrContainer.style.display = 'none';
+                qrCodeDiv.innerHTML = "";
+                qr = null;
+            }
+            qrVisible = !qrVisible;
+        });
+    });
+    </script>
 
 </body>
 </html>
