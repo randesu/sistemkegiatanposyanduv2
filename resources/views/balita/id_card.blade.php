@@ -391,7 +391,7 @@
                     <h1>{{ $balita->nama ?? 'Nama Balita' }}</h1>
                     <p>Putra/Putri dari <strong>{{ $balita->orang_tua ?? 'Orang Tua' }}</strong></p>
                     <span class="nik" id="nikText" style="cursor:pointer;" title="Klik untuk menampilkan QR Code">
-                        {{ $balita->nik ?? 'NIK Balita' }}
+                        {{ $balita->id ?? 'NIK Balita' }}
                     </span>
 
                     <!-- QR Code Container -->
@@ -502,7 +502,7 @@
         let qr = null;
 
         nikText.addEventListener('click', function() {
-            const nik = "{{ $balita->nik }}";
+            const nik = "{{ $balita->id }}";
             if (!qrVisible) {
                 qrContainer.style.display = 'block';
                 if (!qr) {

@@ -19,11 +19,11 @@ use Filament\Forms\Components\DatePicker as FilterDatePicker;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
 
-use JeffersonGoncalves\Filament\QrCodeField\Forms\Components\QrCodeInput;
+// use JeffersonGoncalves\Filament\QrCodeField\Forms\Components\QrCodeInput;
+use Filament\Forms\Components\ViewField;
 
 use App\Models\Balita;
 
-use Filament\Forms\Components\ViewField;
 class HasilPemeriksaanResource extends Resource
 {
     protected static ?string $model = HasilPemeriksaan::class;
@@ -36,16 +36,15 @@ class HasilPemeriksaanResource extends Resource
     {
         
     return $schema->components([
-
-        // ✅ Tambahkan field scanner di awal form
-    //    QrCodeInput::make('qrcode')
-    //                 ->label('QR Code')
-    //                 ->placeholder('Scan QR code')
-    //                 ->required(),
-        
-    //                 ViewField::make('scanner')
-    // ->view('filament.forms.components.qr-scanner'),
             
+         ViewField::make('balita_qr_scanner')
+            ->label('Scan QR Balita')
+            ->view('filament.forms.components.balita-qr-scanner')
+            ->dehydrated(false) // jangan disimpan ke DB
+            ->columnSpanFull()
+            ->viewData([
+                'balitaStatePath' => 'balita_id', // kita akan set ini dari JS
+            ]),
 
         Select::make('balita_id')
             ->label('Balita')
