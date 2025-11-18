@@ -13,28 +13,27 @@
     </div>
 
     <div class="flex gap-2">
-    <!-- Tombol mulai scan -->
-    <x-filament::button
-        type="button"
-        x-show="!isScanning"
-        x-on:click="startScan()"
-        icon="heroicon-o-qr-code"
-    >
-        Scan QR
-    </x-filament::button>
+        <!-- Tombol mulai scan -->
+        <x-filament::button
+            type="button"
+            x-show="!isScanning"
+            x-on:click="startScan()"
+            icon="heroicon-o-qr-code"
+        >
+            Scan QR
+        </x-filament::button>
 
-    <!-- Tombol stop scan -->
-    <x-filament::button
-        type="button"
-        color="gray"
-        x-show="isScanning"
-        x-on:click="stopScan()"
-        icon="heroicon-o-x-circle"
-    >
-        Stop Scan
-    </x-filament::button>
-</div>
-
+        <!-- Tombol stop scan -->
+        <x-filament::button
+            type="button"
+            color="gray"
+            x-show="isScanning"
+            x-on:click="stopScan()"
+            icon="heroicon-o-x-circle"
+        >
+            Stop Scan
+        </x-filament::button>
+    </div>
 
     {{-- Area kamera: hanya tampil saat scanning --}}
     <div
@@ -83,7 +82,18 @@
                         return;
                     }
 
-                    const cameraId = cameras[0].id;
+                    // 🔍 Prioritaskan kamera belakang
+                    let backCamera = cameras.find(cam => {
+                        const label = (cam.label || '').toLowerCase();
+                        return label.includes('back') || label.includes('rear') || label.includes('environment');
+                    });
+
+                    // Jika tidak ketemu, fallback ke kamera terakhir (biasanya belakang)
+                    if (!backCamera) {
+                        backCamera = cameras[cameras.length - 1];
+                    }
+
+                    const cameraId = backCamera.id;
                     this.isScanning = true;
 
                     this.html5QrCode.start(
