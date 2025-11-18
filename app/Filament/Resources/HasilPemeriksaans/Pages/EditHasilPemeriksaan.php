@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\HasilPemeriksaans\Pages;
 
 use App\Filament\Resources\HasilPemeriksaans\HasilPemeriksaanResource;
-use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Actions;
 
 class EditHasilPemeriksaan extends EditRecord
 {
@@ -13,7 +13,13 @@ class EditHasilPemeriksaan extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            Actions\DeleteAction::make(),
+
+            Actions\Action::make('exportPdf')
+                ->label('Export ke PDF')
+                ->icon('heroicon-o-arrow-down-tray')
+                ->url(fn () => route('hasil-pemeriksaan.pdf', $this->getRecord()))
+                ->openUrlInNewTab(),
         ];
     }
 }

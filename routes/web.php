@@ -39,6 +39,11 @@ Route::get('/api/get-balita-by-nik', function (\Illuminate\Http\Request $request
     return $balita ? response()->json($balita) : response()->json([]);
 });
 
+use App\Http\Controllers\HasilPemeriksaanPdfController;
+
+
+Route::get('/hasil-pemeriksaan/{hasil}/pdf', [HasilPemeriksaanPdfController::class, 'show'])
+    ->name('hasil-pemeriksaan.pdf');
 // Route::get('/dashboard-balita/{id}', [BalitaDataController::class, 'showDataById'])
 //     ->name('balita.dashboard');
 // Catatan: Jika ada rute Fortify/Livewire/Volt lainnya, mereka harus diletakkan di sini juga.

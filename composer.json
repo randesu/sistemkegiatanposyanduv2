@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "alperenersoy/filament-export": "^4.0",
+        "barryvdh/laravel-dompdf": "^3.1",
         "filament/filament": "^4.1",
         "jeffersongoncalves/filament-qrcode-field": "^2.0",
         "laravel/fortify": "^1.30",
