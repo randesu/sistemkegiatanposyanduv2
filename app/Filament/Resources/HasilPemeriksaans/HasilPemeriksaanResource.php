@@ -53,8 +53,8 @@ class HasilPemeriksaanResource extends Resource
 
         Select::make('petugas_id')
             ->label('Petugas Posyandu')
-            ->relationship('petugas', 'name')
-            ->required(),
+            ->relationship('petugas', 'name'),
+            
 
         TextInput::make('tinggi')->label('Tinggi (cm)')->numeric()->required(),
         TextInput::make('berat_badan')->label('Berat Badan (kg)')->numeric()->required(),
