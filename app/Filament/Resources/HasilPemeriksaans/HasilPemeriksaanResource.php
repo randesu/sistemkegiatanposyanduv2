@@ -60,6 +60,9 @@ class HasilPemeriksaanResource extends Resource
         TextInput::make('berat_badan')->label('Berat Badan (kg)')->numeric()->required(),
         Textarea::make('catatan')->label('Catatan'),
 
+        TextInput::make('lingkar_kepala')->label('lingkar kepala (cm)')->numeric(),
+
+
         MultiSelect::make('vaksins')
             ->label('Vaksin Diberikan')
             ->relationship('vaksins', 'nama_vaksin')
@@ -80,6 +83,7 @@ class HasilPemeriksaanResource extends Resource
                 TextColumn::make('balita.nama')->label('Balita')->searchable(),
                 TextColumn::make('petugas.name')->label('Petugas')->searchable(),
                 TextColumn::make('tinggi')->label('Tinggi (cm)'),
+                                TextColumn::make('lingkar_kepala')->label('Tinggi (cm)'),
                 TextColumn::make('berat_badan')->label('Berat (kg)'),
 
                 TextColumn::make('vaksins.nama_vaksin')
