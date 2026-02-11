@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('hasil_pemeriksaans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('balita_id')->constrained('balitas','id')->cascadeOnDelete();
-            $table->foreignId('petugas_id')->constrained('petugas_posyandu','id')->cascadeOnDelete();
+            $table->foreignId('petugas_id')->nullable()->constrained('petugas_posyandu','id')->nullOnDelete();
             $table->float('tinggi')->nullable();
             $table->float('berat_badan')->nullable();
             $table->text('catatan')->nullable();
