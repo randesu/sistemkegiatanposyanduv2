@@ -49,11 +49,12 @@ class HasilPemeriksaanResource extends Resource
         Select::make('balita_id')
             ->label('Balita')
             ->relationship('balita', 'nama')
+            ->searchable()
             ->required(),
 
-        Select::make('petugas_id')
-            ->label('Petugas Posyandu')
-            ->relationship('petugas', 'name'),
+        // Select::make('petugas_id')
+        //     ->label('Petugas Posyandu')
+        //     ->relationship('petugas', 'name'),
             
 
         TextInput::make('tinggi')->label('Tinggi (cm)')->numeric()->required(),
