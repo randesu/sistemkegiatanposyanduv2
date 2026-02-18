@@ -41,7 +41,7 @@ class HasilPemeriksaanResource extends Resource
             ->label('Scan QR Balita')
             ->view('filament.forms.components.balita-qr-scanner')
             ->dehydrated(false) // jangan disimpan ke DB
-            ->columnSpSERVERanFull()
+            ->columnSpanFull()
             ->viewData([
                 'balitaStatePath' => 'balita_id', // kita akan set ini dari JS
             ]),
