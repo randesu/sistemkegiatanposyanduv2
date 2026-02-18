@@ -49,8 +49,17 @@ class HasilPemeriksaanResource extends Resource
         Select::make('balita_id')
             ->label('Balita')
             ->relationship('balita', 'nama')
-            ->searchable()
+            ->searchable(['nama', 'orang_tua'])
+            ->getOptionLabelFromRecordUsing(fn ($record) =>
+                $record->nama . ' (' . $record->orang_tua . ')'
+            )
             ->required(),
+
+        // Select::make('balita_id')
+        //     ->label('Balita')
+        //     ->relationship('balita', 'nama')
+        //     ->searchable()
+        //     ->required(),
 
         // Select::make('petugas_id')
         //     ->label('Petugas Posyandu')
