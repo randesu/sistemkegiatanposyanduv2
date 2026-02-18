@@ -41,7 +41,7 @@ class HasilPemeriksaanResource extends Resource
             ->label('Scan QR Balita')
             ->view('filament.forms.components.balita-qr-scanner')
             ->dehydrated(false) // jangan disimpan ke DB
-            ->columnSpanFull()
+            ->columnSpSERVERanFull()
             ->viewData([
                 'balitaStatePath' => 'balita_id', // kita akan set ini dari JS
             ]),
@@ -49,7 +49,7 @@ class HasilPemeriksaanResource extends Resource
         Select::make('balita_id')
             ->label('Balita')
             ->relationship('balita', 'nama')
-            ->searchable(['nama', 'orang_tua'])
+            ->searchable(['nama', 'orang_tua', 'nik'])
             ->getOptionLabelFromRecordUsing(fn ($record) =>
                 $record->nama . ' (' . $record->orang_tua . ')'
             )
