@@ -50,8 +50,9 @@ class HasilPemeriksaanResource extends Resource
             ->label('Balita')
             ->relationship('balita', 'nama')
             ->searchable(['nama', 'orang_tua', 'nik'])
+            ->searchPrompt('Ketik nama, NIK, atau orang tua...')
             ->getOptionLabelFromRecordUsing(fn ($record) =>
-                $record->nama . ' (' . $record->orang_tua . ')'
+                $record->nama . ' (' . $record->orang_tua . ') - ' . $record->nik
             )
             ->required(),
 
