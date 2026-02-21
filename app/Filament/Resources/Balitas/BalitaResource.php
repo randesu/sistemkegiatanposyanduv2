@@ -2,26 +2,24 @@
 
 namespace App\Filament\Resources\Balitas;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Resources\Balitas\Pages;
 use App\Models\Balita;
-use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
+use Filament\Actions\Action;
+use Filament\Forms\Components\DatePicker as FilterDatePicker;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Operation;
-use Illuminate\Support\Facades\Hash;
-
-use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
-
-// ✅ Tambahan untuk export dan filter tanggal
-use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
-use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
-use Filament\Forms\Components\DatePicker as FilterDatePicker;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Hash;
 
 class BalitaResource extends Resource
 {
@@ -34,10 +32,23 @@ class BalitaResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
+            // TextInput::make('nik')
+            //     ->label('NIK')
+            //     ->required()
+            //     ->unique(ignoreRecord: true),
+
             TextInput::make('nik')
-                ->label('NIK')
-                ->required()
-                ->unique(ignoreRecord: true),
+    ->label('NIK')
+    ->required()
+    ->unique(ignoreRecord: true)
+    ->suffixActions([
+        Action::make('generateNik')
+            ->icon('heroicon-m-arrow-path')
+            ->tooltip('Generate NIK Sementara')
+            ->action(function ($set) {
+                $set('nik', '0000' . now()->format('ymdHis'));
+            }),
+    ]),
 
             TextInput::make('nama')
                 ->label('Nama Balita')
