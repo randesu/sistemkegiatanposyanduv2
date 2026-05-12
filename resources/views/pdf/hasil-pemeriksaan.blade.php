@@ -19,11 +19,6 @@
     </div>
 
     <div class="section">
-        <span class="label">Petugas:</span>
-        {{ $hasil->petugas->name ?? '-' }}
-    </div>
-
-    <div class="section">
         <span class="label">Tinggi (cm):</span>
         {{ $hasil->tinggi }}
     </div>
@@ -31,6 +26,11 @@
     <div class="section">
         <span class="label">Berat (kg):</span>
         {{ $hasil->berat_badan }}
+    </div>
+
+        <div class="section">
+        <span class="label">Lingkar Kepala(cm):</span>
+        {{ $hasil->lingkar_kepala }}
     </div>
 
     <div class="section">

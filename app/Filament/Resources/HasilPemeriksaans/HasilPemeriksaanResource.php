@@ -92,10 +92,11 @@ class HasilPemeriksaanResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('balita.nama')->label('Balita')->searchable(),
-                TextColumn::make('petugas.name')->label('Petugas')->searchable(),
+                // TextColumn::make('petugas.name')->label('Petugas')->searchable(),
                 TextColumn::make('tinggi')->label('Tinggi (cm)'),
-                                TextColumn::make('lingkar_kepala')->label('Tinggi (cm)'),
                 TextColumn::make('berat_badan')->label('Berat (kg)'),
+                                                TextColumn::make('lingkar_kepala')->label('Lingkar Kepala (cm)'),
+
 
                 TextColumn::make('vaksins.nama_vaksin')
                     ->label('Vaksin')
