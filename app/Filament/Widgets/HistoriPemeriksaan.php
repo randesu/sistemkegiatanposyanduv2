@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class HistoriPemeriksaan extends BaseWidget
 {
+    protected static bool $isDiscovered = false;
     public ?Balita $record = null;
 
     protected int | string | array $columnSpan = 'full';

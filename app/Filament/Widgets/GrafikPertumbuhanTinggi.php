@@ -7,6 +7,7 @@ use Filament\Widgets\ChartWidget;
 
 class GrafikPertumbuhanTinggi extends ChartWidget
 {
+    protected static bool $isDiscovered = false;
     public ?Balita $record = null;
 
     protected ?string $heading = 'Grafik Tinggi Badan';
