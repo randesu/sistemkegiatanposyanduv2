@@ -10,7 +10,8 @@ class HasilPemeriksaan extends Model
 {
     protected $table = 'hasil_pemeriksaans';
     protected $primaryKey = 'id';
-    protected $fillable = ['balita_id','petugas_id','tinggi','berat_badan','lingkar_kepala','catatan'];
+    protected $fillable = ['balita_id','petugas_id','tinggi','berat_badan','lingkar_kepala','catatan','created_at',
+    'updated_at'];
 
     public function balita() { return $this->belongsTo(Balita::class, 'balita_id', 'id'); }
     public function petugas() { return $this->belongsTo(PetugasPosyandu::class, 'petugas_id', 'id'); }
