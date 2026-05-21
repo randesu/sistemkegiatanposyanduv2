@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Models\Balita;
 use App\Models\WhoWeightAge;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
 
 class GrafikPertumbuhan extends ChartWidget
@@ -43,72 +44,105 @@ class GrafikPertumbuhan extends ChartWidget
         $plus2Data = [];
 
         $pointColors = [];
+// AMBIL PEMERIKSAAN PERTAMA & TERAKHIR
+$firstCheckup = $checkups->first();
+$lastCheckup = $checkups->last();
 
-        foreach ($checkups as $checkup) {
+if (!$firstCheckup || !$lastCheckup) {
+    return [
+        'datasets' => [],
+        'labels' => [],
+    ];
+}
 
-            // HITUNG UMUR
-            $umur = round(
-                Carbon::parse($this->record->tanggal_lahir)
-                    ->diffInMonths($checkup->created_at, true),
-                1
-            );
+// PERIODE BULAN
+$period = CarbonPeriod::create(
+    $firstCheckup->created_at->startOfMonth(),
+    '1 month',
+    $lastCheckup->created_at->startOfMonth()
+);
 
-            $umurBulan = floor($umur);
+// LOOP SEMUA BULAN
+foreach ($period as $date) {
 
-            $berat = $checkup->berat_badan;
+    // LABEL BULAN
+    $labels[] = $date->translatedFormat('M Y');
 
-            // AMBIL GENDER
-            $gender = $this->record->jenis_kelamin;
+    // CARI DATA PEMERIKSAAN DI BULAN INI
+    $checkup = $checkups->first(function ($item) use ($date) {
 
-            if ($gender === 'Laki-laki') {
-                $gender = 'L';
-            }
+        return $item->created_at->format('Y-m')
+            === $date->format('Y-m');
+    });
 
-            if ($gender === 'Perempuan') {
-                $gender = 'P';
-            }
+    // GENDER
+    $gender = $this->record->jenis_kelamin;
 
-            // AMBIL DATA WHO
-            $who = WhoWeightAge::where('gender', $gender)
-                ->where('umur_bulan', $umurBulan)
-                ->first();
+    if ($gender === 'Laki-laki') {
+        $gender = 'L';
+    }
 
-            $labels[] = $umur . ' bln';
+    if ($gender === 'Perempuan') {
+        $gender = 'P';
+    }
 
-            // DATA BERAT BADAN ANAK
-            $anakData[] = $berat;
+    // HITUNG UMUR BERDASARKAN BULAN
+    $umurBulan = floor(
+        Carbon::parse($this->record->tanggal_lahir)
+            ->diffInMonths($date, true)
+    );
 
-            // DATA WHO
-            $medianData[] = $who?->median;
-            $minus2Data[] = $who?->minus_2sd;
-            $minus3Data[] = $who?->minus_3sd;
+    // DATA WHO
+    $who = WhoWeightAge::where('gender', $gender)
+        ->where('umur_bulan', $umurBulan)
+        ->first();
 
-            $plus1Data[] = $who?->plus_1sd;
-            $plus2Data[] = $who?->plus_2sd;
+    // DATA WHO KE GRAFIK
+    $medianData[] = $who?->median;
+    $minus2Data[] = $who?->minus_2sd;
+    $minus3Data[] = $who?->minus_3sd;
 
-            // WARNA TITIK BERDASARKAN WHO
-            if ($who) {
+    $plus1Data[] = $who?->plus_1sd;
+    $plus2Data[] = $who?->plus_2sd;
 
-                if ($berat < $who->minus_3sd) {
+    // JIKA ADA PEMERIKSAAN
+    if ($checkup) {
 
-                    $pointColors[] = '#ef4444'; // merah
+        $berat = $checkup->berat_badan;
 
-                } elseif ($berat < $who->minus_2sd) {
+        $anakData[] = $berat;
 
-                    $pointColors[] = '#facc15'; // kuning
+        // WARNA TITIK
+        if ($who) {
 
-                } else {
+            if ($berat < $who->minus_3sd) {
 
-                    $pointColors[] = '#22c55e'; // hijau
+                $pointColors[] = '#ef4444';
 
-                }
+            } elseif ($berat < $who->minus_2sd) {
+
+                $pointColors[] = '#facc15';
 
             } else {
 
-                $pointColors[] = '#3b82f6';
+                $pointColors[] = '#22c55e';
 
             }
+
+        } else {
+
+            $pointColors[] = '#3b82f6';
+
         }
+
+    } else {
+
+        // BULAN TANPA PEMERIKSAAN
+        $anakData[] = null;
+
+        $pointColors[] = '#9ca3af';
+    }
+}
 
         return [
             'datasets' => [
