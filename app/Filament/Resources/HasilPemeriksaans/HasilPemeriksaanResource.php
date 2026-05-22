@@ -32,6 +32,10 @@ class HasilPemeriksaanResource extends Resource
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-clipboard-document';
     protected static ?string $navigationLabel = 'Check-Up';
 
+protected static ?string $modelLabel = 'Check-Up';
+
+protected static ?string $pluralModelLabel = 'Check-Up';
+
     public static function form(Schema $schema): Schema
     {
         
