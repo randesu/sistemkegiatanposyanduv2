@@ -78,16 +78,17 @@ protected static ?string $pluralModelLabel = 'Check-Up';
         TextInput::make('lingkar_kepala')->label('lingkar kepala (cm)')->numeric(),
 
 
-        MultiSelect::make('vaksins')
-            ->label('Vaksin Diberikan')
+        Select::make('vaksins')
             ->relationship('vaksins', 'nama_vaksin')
+            ->multiple()
             ->preload(),
-
-        MultiSelect::make('vitamins')
-            ->label('Vitamin Diberikan')
+            
+        Select::make('vitamins')
+            ->label('Vitamin')
             ->relationship('vitamins', 'nama_vitamin')
+            ->multiple()
             ->preload()
-            ->helperText('Pilih vitamin yang diberikan pada pemeriksaan ini.'),
+            ->searchable(),
     ]);
 }
 
