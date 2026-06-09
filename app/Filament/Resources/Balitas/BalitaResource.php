@@ -40,6 +40,7 @@ class BalitaResource extends Resource
             TextInput::make('nik')
     ->label('NIK')
     ->required()
+    ->integer(16)
     ->unique(ignoreRecord: true)
     ->suffixActions([
         Action::make('generateNik')
