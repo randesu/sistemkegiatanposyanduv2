@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cek Data Balita</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Google reCAPTCHA -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
     <style>
         :root {
             --primary-color: #6a89cc;
@@ -30,7 +35,8 @@
             position: relative;
         }
 
-        body::before, body::after {
+        body::before,
+        body::after {
             content: '';
             position: absolute;
             border-radius: 50%;
@@ -112,15 +118,22 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        button:hover {
+        button:hover:not(:disabled) {
             background: linear-gradient(45deg, #8a9fc7, var(--primary-color));
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         }
 
-        button:active {
+        button:active:not(:disabled) {
             transform: translateY(0);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .error-message {
@@ -130,20 +143,55 @@
             margin-bottom: 1rem;
             font-weight: 400;
         }
+
+        .captcha-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
+
     <form action="{{ route('balita.dashboard') }}" method="POST">
         @csrf
+
         <h2>Portal Kesehatan</h2>
         <h2>Posyandu Bunga Tulip</h2>
-        
-       <input type="text" name="nik" placeholder="Masukkan NIK Balita">
-@error('nik')
-    <p class="error-message">{{ $message }}</p>
-@enderror
 
-        <button type="submit">Lihat Data</button>
+        <input
+            type="text"
+            name="nik"
+            placeholder="Masukkan NIK Balita"
+            value="{{ old('nik') }}"
+        >
+
+        @error('nik')
+            <p class="error-message">{{ $message }}</p>
+        @enderror
+
+        <div class="captcha-container">
+            <div
+                class="g-recaptcha"
+                data-sitekey="{{ config('services.recaptcha.site_key') }}"
+                data-callback="enableSubmitButton">
+            </div>
+        </div>
+
+        @error('g-recaptcha-response')
+            <p class="error-message">{{ $message }}</p>
+        @enderror
+
+        <button type="submit" id="submitBtn" disabled>
+            Lihat Data
+        </button>
     </form>
+
+    <script>
+        function enableSubmitButton() {
+            document.getElementById('submitBtn').disabled = false;
+        }
+    </script>
+
 </body>
 </html>

@@ -10,20 +10,27 @@ class BalitaDataController extends Controller
 {
     public function showForm()
     {
-        return view('balita.cek'); // form input NIK balita
+        return view('balita.cek');
     }
 
     public function showData(Request $request)
     {
         $request->validate([
             'nik' => 'required|string|exists:balitas,nik',
+            'g-recaptcha-response' => 'required|captcha',
         ], [
             'nik.exists' => 'Data balita dengan NIK tersebut tidak ditemukan.',
+            'g-recaptcha-response.required' => 'Silakan selesaikan CAPTCHA terlebih dahulu.',
+            'g-recaptcha-response.captcha' => 'Verifikasi CAPTCHA gagal.',
         ]);
 
-        $balita = Balita::with(['hasilPemeriksaans' => function ($query) {
-            $query->orderBy('created_at', 'asc');
-        }])->where('nik', $request->nik)->firstOrFail();
+        $balita = Balita::with([
+            'hasilPemeriksaans' => function ($query) {
+                $query->orderBy('created_at', 'asc');
+            }
+        ])
+            ->where('nik', $request->nik)
+            ->firstOrFail();
 
         Carbon::setLocale('id');
 
@@ -31,35 +38,49 @@ class BalitaDataController extends Controller
     }
 
     public function showPemeriksaan(Request $request)
-{
-    $request->validate([
-        'nik' => 'required|exists:balitas,nik',
-    ]);
+    {
+        $request->validate([
+            'nik' => 'required|exists:balitas,nik',
+            'g-recaptcha-response' => 'required|captcha',
+        ], [
+            'nik.exists' => 'Data balita dengan NIK tersebut tidak ditemukan.',
+            'g-recaptcha-response.required' => 'Silakan selesaikan CAPTCHA terlebih dahulu.',
+            'g-recaptcha-response.captcha' => 'Verifikasi CAPTCHA gagal.',
+        ]);
 
-    $balita = \App\Models\Balita::with(['hasilPemeriksaans.vaksins', 'hasilPemeriksaans.vitamins'])
-        ->where('nik', $request->nik)
-        ->firstOrFail();
+        $balita = Balita::with([
+            'hasilPemeriksaans.vaksins',
+            'hasilPemeriksaans.vitamins'
+        ])
+            ->where('nik', $request->nik)
+            ->firstOrFail();
 
-    \Carbon\Carbon::setLocale('id');
+        Carbon::setLocale('id');
 
-    return view('balita.riwayat_pemeriksaan', compact('balita'));
-}
-
+        return view('balita.riwayat_pemeriksaan', compact('balita'));
+    }
 
     public function showDataById($id)
     {
-        $balita = \App\Models\Balita::findOrFail($id);
+        $balita = Balita::findOrFail($id);
 
         return view('dashboard', compact('balita'));
     }
 
     public function showDetail(Request $request, Balita $balita = null)
     {
-        // Jika menggunakan POST dan NIK dikirim via form
         if ($request->has('nik')) {
+
+            $request->validate([
+                'g-recaptcha-response' => 'required|captcha',
+            ], [
+                'g-recaptcha-response.required' => 'Silakan selesaikan CAPTCHA terlebih dahulu.',
+                'g-recaptcha-response.captcha' => 'Verifikasi CAPTCHA gagal.',
+            ]);
+
             $balita = Balita::where('nik', $request->input('nik'))->firstOrFail();
         } elseif (!$balita) {
-            // Jika tidak ada parameter balita di URL dan tidak ada NIK di request
+
             abort(404, 'Data balita tidak ditemukan.');
         }
 
@@ -68,9 +89,17 @@ class BalitaDataController extends Controller
 
     public function showIdCard(Request $request)
     {
-        $request->validate(['nik' => 'required|exists:balitas,nik']);
+        $request->validate([
+            'nik' => 'required|exists:balitas,nik',
+            'g-recaptcha-response' => 'required|captcha',
+        ], [
+            'nik.exists' => 'Data balita dengan NIK tersebut tidak ditemukan.',
+            'g-recaptcha-response.required' => 'Silakan selesaikan CAPTCHA terlebih dahulu.',
+            'g-recaptcha-response.captcha' => 'Verifikasi CAPTCHA gagal.',
+        ]);
+
         $balita = Balita::where('nik', $request->nik)->firstOrFail();
+
         return view('balita.id_card', compact('balita'));
     }
-
 }
