@@ -30,7 +30,14 @@ class VaksinResource extends Resource
             TextInput::make('jenis_vaksin')
                 ->label('Jenis Vaksin')
                 ->nullable(),
-        ]);
+            TextInput::make('bulan_min')
+                ->numeric()
+                ->required(),
+
+            TextInput::make('bulan_max')
+                ->numeric()
+                ->required(),
+                    ]);
     }
 
     public static function table(Table $table): Table
@@ -40,6 +47,8 @@ class VaksinResource extends Resource
                 TextColumn::make('nama_vaksin')->label('Nama Vaksin')->searchable(),
                 TextColumn::make('jenis_vaksin')->label('Jenis')->searchable(),
                 TextColumn::make('created_at')->label('Dibuat')->dateTime(),
+                TextColumn::make('bulan_min')->label("bulan min ke-")->searchable(),
+                TextColumn::make('bulan_max')->label("bulan max ke-")->searchable(),
             ])
             ->headerActions([
                 // ✅ Tombol Export di Header Table

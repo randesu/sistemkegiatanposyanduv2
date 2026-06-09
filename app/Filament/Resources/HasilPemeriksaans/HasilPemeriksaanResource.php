@@ -12,6 +12,11 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\MultiSelect;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
+use Carbon\Carbon;
+
+use App\Models\Vaksin;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 
 // ✅ Tambahan
 use Filament\Tables\Filters\Filter;
@@ -49,7 +54,6 @@ protected static ?string $pluralModelLabel = 'Check-Up';
             ->viewData([
                 'balitaStatePath' => 'balita_id', // kita akan set ini dari JS
             ]),
-
         Select::make('balita_id')
             ->label('Balita')
             ->relationship('balita', 'nama')
@@ -58,7 +62,36 @@ protected static ?string $pluralModelLabel = 'Check-Up';
             ->getOptionLabelFromRecordUsing(fn ($record) =>
                 $record->nama . ' (' . $record->orang_tua . ') - ' . $record->nik
             )
+            ->live()
+            ->afterStateUpdated(function (Set $set, $state) {
+
+                $balita = Balita::find($state);
+
+                if (!$balita || !$balita->tanggal_lahir) {
+                    return;
+                }
+
+                $umurBulan = Carbon::parse($balita->tanggal_lahir)
+                    ->diffInMonths(now());
+
+                $vaksinIds = Vaksin::query()
+                    ->where('bulan_min', '<=', $umurBulan)
+                    ->where('bulan_max', '>=', $umurBulan)
+                    ->pluck('id')
+                    ->toArray();
+
+                $set('vaksins', $vaksinIds);
+            })
             ->required(),
+        // Select::make('balita_id')
+        //     ->label('Balita')
+        //     ->relationship('balita', 'nama')
+        //     ->searchable(['nama', 'orang_tua', 'nik'])
+        //     ->searchPrompt('Ketik nama, NIK, atau orang tua...')
+        //     ->getOptionLabelFromRecordUsing(fn ($record) =>
+        //         $record->nama . ' (' . $record->orang_tua . ') - ' . $record->nik
+        //     )
+        //     ->required(),
 
         // Select::make('balita_id')
         //     ->label('Balita')
@@ -78,11 +111,45 @@ protected static ?string $pluralModelLabel = 'Check-Up';
         TextInput::make('lingkar_kepala')->label('lingkar kepala (cm)')->numeric(),
 
 
+        // Select::make('vaksins')
+        //     ->relationship('vaksins', 'nama_vaksin')
+        //     ->multiple()
+        //     ->preload(),
         Select::make('vaksins')
-            ->relationship('vaksins', 'nama_vaksin')
-            ->multiple()
-            ->preload(),
-            
+                ->label('Vaksin')
+                ->relationship('vaksins', 'nama_vaksin')
+                ->multiple()
+                ->preload()
+                ->searchable()
+                ->helperText(function (Get $get) {
+
+                    $balitaId = $get('balita_id');
+
+                    if (!$balitaId) {
+                        return 'Pilih balita terlebih dahulu.';
+                    }
+
+                    $balita = Balita::find($balitaId);
+
+                    if (!$balita || !$balita->tanggal_lahir) {
+                        return null;
+                    }
+
+                    $umurBulan = Carbon::parse($balita->tanggal_lahir)
+                        ->diffInMonths(now());
+
+                    $vaksinRekomendasi = Vaksin::query()
+                        ->where('bulan_min', '<=', $umurBulan)
+                        ->where('bulan_max', '>=', $umurBulan)
+                        ->pluck('nama_vaksin')
+                        ->toArray();
+
+                    if (empty($vaksinRekomendasi)) {
+                        return "Tidak ada rekomendasi vaksin untuk usia {$umurBulan} bulan.";
+                    }
+
+                    return 'Rekomendasi usia ' . $umurBulan . ' bulan: ' . implode(', ', $vaksinRekomendasi);
+                }),
         Select::make('vitamins')
             ->label('Vitamin')
             ->relationship('vitamins', 'nama_vitamin')

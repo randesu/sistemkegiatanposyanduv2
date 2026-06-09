@@ -7,7 +7,7 @@ class Vaksin extends Model
 {
     protected $table = 'vaksins';
     protected $primaryKey = 'id';
-    protected $fillable = ['nama_vaksin','jenis_vaksin'];
+    protected $fillable = ['nama_vaksin','jenis_vaksin','bulan_min','bulan_max'];
 
     public function hasilPemeriksaans()
     {
